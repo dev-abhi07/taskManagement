@@ -1,4 +1,3 @@
-const bodyParser = require('body-parser')
 const express = require('express')
 const { readdirSync } = require('fs')
 const app = express()
@@ -8,6 +7,10 @@ const cors = require('cors')
 const body = require('body-parser')
 
 const port = process.env.SERVER_PORT || 9000
+
+
+app.use(body.json({ limit: '5mb' }))
+app.use(body.urlencoded({ extended: true }))
 
 
 readdirSync('./app/Routes').map((route) =>
