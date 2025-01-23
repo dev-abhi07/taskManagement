@@ -40,12 +40,12 @@ const plan = sequelize.define("plan", {
         defaultValue:false
     }
 });
-sequelize
-    .sync()
-    .then(() => {
-        console.log("Database & tables created!");
-    })
-    .catch((error) => {
-        console.error("Error creating database & tables:", error);
-    });
+// sequelize
+//     .sync()
+//     .then(() => {
+//         console.log("Database & tables created!");
+//     })
+//     .catch((error) => {
+//         console.error("Error creating database & tables:", error);
+//     });
 module.exports = plan
