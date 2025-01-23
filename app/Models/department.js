@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
 
-const department = sequelize.define('',{
+const department = sequelize.define('department',{
     company_id:{
         type:DataTypes.BIGINT,
         allowNull:false
@@ -20,6 +20,7 @@ const department = sequelize.define('',{
         defaultValue:true
     }
 })
+
 // sequelize
 //   .sync({alter:true})
 //   .then(() => {
