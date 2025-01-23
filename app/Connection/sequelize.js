@@ -8,7 +8,11 @@ const sequelize = new Sequelize({
     password:process.env.DB_PASSWORD,
     database:process.env.DB_DATABASE,
     port:process.env.DB_PORT,
-    timezone: '+05:30'
+    timezone: '+05:30',
+    dialectOptions: {
+      useUTC: false, 
+    },
+    logging: false, 
 })  
 sequelize.authenticate().then(() => {
   console.log('connected');

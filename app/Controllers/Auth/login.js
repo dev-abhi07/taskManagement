@@ -3,5 +3,11 @@ const users = require("../../Models/users");
 
 
 exports.login = async (req, res) => {
-    console.log(req)
+    
+    const data = req.body
+    const usersData = users.findOne({
+        where:{
+            
+        }
+    }) 
 }
