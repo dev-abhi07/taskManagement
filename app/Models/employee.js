@@ -28,11 +28,11 @@ const employee = sequelize.define("employee", {
   },
 });
 sequelize
-  .sync({force:true})
-  .then(() => {
-    console.log("Database & tables created!");
-  })
-  .catch((error) => {
-    console.error("Error creating database & tables:", error);
-  });
+  // .sync({force:true})
+  // .then(() => {
+  //   console.log("Database & tables created!");
+  // })
+  // .catch((error) => {
+  //   console.error("Error creating database & tables:", error);
+  // });
 module.exports = employee

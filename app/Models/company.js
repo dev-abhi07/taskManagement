@@ -40,11 +40,11 @@ const company  = sequelize.define('company',{
     }
 })
 sequelize
-    .sync()
-    .then(() => {
-        console.log("Database & tables created!");
-    })
-    .catch((error) => {
-        console.error("Error creating database & tables:", error);
-    });
+    // .sync()
+    // .then(() => {
+    //     console.log("Database & tables created!");
+    // })
+    // .catch((error) => {
+    //     console.error("Error creating database & tables:", error);
+    // });
 module.exports = company
