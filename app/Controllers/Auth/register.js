@@ -65,3 +65,4 @@ exports.companyRegister = async (req, res, next) => {
     next(err);
   }
 };
+
