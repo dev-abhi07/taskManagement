@@ -9,6 +9,8 @@ const body = require('body-parser')
 
 const port = process.env.SERVER_PORT || 9000
 
+app.use(express.json())
+
 
 readdirSync('./app/Routes').map((route) =>
 
