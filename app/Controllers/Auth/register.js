@@ -51,3 +51,4 @@ exports.companyRegister = async (req, res, next) => {
     Helper.response("failed", "Database Error", err, res, 500)
   }
 };
+
