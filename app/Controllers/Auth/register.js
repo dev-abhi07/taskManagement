@@ -1,9 +1,8 @@
 const users = require("../../Models/users");
 const company = require("../../Models/company");
+const Helper = require("../../Helper/helper");
+
 exports.companyRegister = async (req, res, next) => {
-
-
-    console.log(req.body,25)
   try {
     const {
       company_name,
@@ -41,27 +40,14 @@ exports.companyRegister = async (req, res, next) => {
         created_by:1
       });
       if (userEntry) {
-        res.status(200).json({
-          status: 200,
-          message: "Company and user registered successfully",
-          data: { companies, user: userEntry },
-        });
+        Helper.response("success", "Company Registered Successfully", {companies, user: userEntry}, res, 200)       
       } else {
-        res.status(200).json({
-          status: 500,
-          message: "Failed to register user",
-          data: null,
-        });
+        Helper.response("failed", "Unable to create company", {}, res, 200)
       }
     } else {
-      res.status(200).json({
-        status: 500,
-        message: "Failed to register company",
-        data: null,
-      });
+      Helper.response("failed", "Database Error", {}, res, 500)
     }
   } catch (err) {
-    console.log(err);
-    next(err);
+    Helper.response("failed", "Database Error", err, res, 500)
   }
 };
