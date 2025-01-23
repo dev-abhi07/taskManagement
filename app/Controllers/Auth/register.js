@@ -58,7 +58,7 @@ exports.companyRegister = async (req, res, next) => {
         status: 500,
         message: "Failed to register company",
         data: null,
-      });
+      })
     }
   } catch (err) {
     console.log(err);
