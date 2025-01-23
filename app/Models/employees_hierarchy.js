@@ -24,12 +24,12 @@ const emp_hierarchy = sequelize.define('emp_hierarchy',{
     }
 })
 sequelize
-  .sync({force:true})
-  .then(() => {
-    console.log("Database & tables created!");
-  })
-  .catch((error) => {
-    console.error("Error creating database & tables:", error);
-  });
+  // .sync({force:true})
+  // .then(() => {
+  //   console.log("Database & tables created!");
+  // })
+  // .catch((error) => {
+  //   console.error("Error creating database & tables:", error);
+  // });
 
 module.exports = emp_hierarchy
