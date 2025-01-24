@@ -26,7 +26,7 @@ const employee = sequelize.define("employee", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  reporting_true:{
+  reporting_to:{
     type:DataTypes.BIGINT,
     allowNull:false
   },
