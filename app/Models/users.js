@@ -40,12 +40,12 @@ const users = sequelize.define("user", {
     defaultValue: 0,
   }
 });
-sequelize
-    .sync({force:true})
-    .then(() => {
-        console.log("Database & tables created!");
-    })
-    .catch((error) => {
-        console.error("Error creating database & tables:", error);
-    });
+// sequelize
+//     .sync({force:true})
+//     .then(() => {
+//         console.log("Database & tables created!");
+//     })
+//     .catch((error) => {
+//         console.error("Error creating database & tables:", error);
+//     });
 module.exports = users;
