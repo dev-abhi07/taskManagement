@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const { configDotenv } = require('dotenv').config()
 const cors = require('cors')
 const body = require('body-parser')
+const synchronize = require('./app/Models/index')
 
 
 const port = process.env.SERVER_PORT || 9000
