@@ -41,7 +41,7 @@ const users = sequelize.define("user", {
   }
 });
 // sequelize
-//     .sync({alter:true})
+//     .sync({force:true})
 //     .then(() => {
 //         console.log("Database & tables created!");
 //     })
