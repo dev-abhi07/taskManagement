@@ -1,16 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
 
-const emp_hierarchy = sequelize.define('emp_hierarchy',{
-    employee_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    },
-    manager_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false,        
-    },
-    role_id:{
+const designation = sequelize.define('designation',{
+    company_id:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
@@ -18,13 +10,23 @@ const emp_hierarchy = sequelize.define('emp_hierarchy',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
+    name:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+    status:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue:true
+    },
     created_by:{
         type:DataTypes.BIGINT,
         allowNull:false
     }
 })
+
 // sequelize
-//   .sync({alter:true})
+//   .sync({force:true})
 //   .then(() => {
 //     console.log("Database & tables created!");
 //   })
@@ -32,4 +34,4 @@ const emp_hierarchy = sequelize.define('emp_hierarchy',{
 //     console.error("Error creating database & tables:", error);
 //   });
 
-module.exports = emp_hierarchy
+module.exports = designation

@@ -36,7 +36,7 @@ exports.companyRegister = async (req, res, next) => {
         username: username,
         mobile: companies.contact_number,
         role: 2,
-        password: "1234",
+        password: Helper.encryptPassword(req.body.password),
         created_by:1
       });
       if (userEntry) {

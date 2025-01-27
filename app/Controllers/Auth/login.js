@@ -1,8 +1,8 @@
 const { Op } = require("sequelize");
-const department = require("../../Models/department");
-const users = require("../../Models/users");
 const jwt = require("jsonwebtoken");
 const Helper = require("../../Helper/helper");
+const users = require("../../Models/users");
+
 
 exports.login = async (req, res) => {
   const data = req.body;
@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
       Helper.response(
         "success",
         "Logged In Successfully!",
-        { userdata: user },
+        { userData: user },
         res,
         200
       );

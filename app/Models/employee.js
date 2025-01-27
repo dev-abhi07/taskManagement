@@ -26,6 +26,14 @@ const employee = sequelize.define("employee", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  reporting_to:{
+    type:DataTypes.INTEGER,
+    allowNull:true
+  },
+  created_by:{
+    type:DataTypes.INTEGER,
+    allowNull:false
+  }
 });
 // sequelize
 //   .sync({force:true})

@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
 
+
 const users = sequelize.define("user", {
   name: {
     type: DataTypes.STRING,
@@ -48,4 +49,6 @@ const users = sequelize.define("user", {
 //     .catch((error) => {
 //         console.error("Error creating database & tables:", error);
 //     });
+
+
 module.exports = users;
