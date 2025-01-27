@@ -26,13 +26,22 @@ const employee = sequelize.define("employee", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  reporting_to:{
+    type:DataTypes.BIGINT,
+    allowNull:false
+  },
+  created_by:{
+    type:DataTypes.BIGINT,
+    allowNull:false
+}
+
 });
-sequelize
-  .sync({force:true})
-  .then(() => {
-    console.log("Database & tables created!");
-  })
-  .catch((error) => {
-    console.error("Error creating database & tables:", error);
-  });
+// sequelize
+//   .sync({force:true})
+//   .then(() => {
+//     console.log("Database & tables created!");
+//   })
+//   .catch((error) => {
+//     console.error("Error creating database & tables:", error);
+//   });
 module.exports = employee
