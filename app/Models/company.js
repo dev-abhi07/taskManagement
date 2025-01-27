@@ -19,7 +19,7 @@ const company  = sequelize.define('company',{
         allowNull:false
     },
     subscription_plan_id:{
-        type:DataTypes.STRING,
+        type:DataTypes.BIGINT,
         allowNull:false
     },
     subscription_start:{
@@ -39,12 +39,12 @@ const company  = sequelize.define('company',{
         allowNull:false
     }
 })
-// sequelize
-//     .sync()
-//     .then(() => {
-//         console.log("Database & tables created!");
-//     })
-//     .catch((error) => {
-//         console.error("Error creating database & tables:", error);
-//     });
+    // sequelize
+    // .sync()
+    // .then(() => {
+    //     console.log("Database & tables created!");
+    // })
+    // .catch((error) => {
+    //     console.error("Error creating database & tables:", error);
+    // });
 module.exports = company

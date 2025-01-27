@@ -22,7 +22,7 @@ const department = sequelize.define('department',{
 })
 
 // sequelize
-//   .sync({alter:true})
+//   .sync({force:true})
 //   .then(() => {
 //     console.log("Database & tables created!");
 //   })

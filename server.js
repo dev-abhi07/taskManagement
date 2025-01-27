@@ -11,6 +11,11 @@ const synchronize = require('./app/Models/index')
 const port = process.env.SERVER_PORT || 9000
 
 app.use(express.json())
+app.use(
+    cors({
+        origin: '*',
+    }),
+)
 
 
 app.use(body.json({ limit: '5mb' }))
