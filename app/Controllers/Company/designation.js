@@ -129,7 +129,7 @@ exports.designationsList = async (req, res) => {
     } catch (err) {
       return Helper.response("failed", err, [], res, 500);
     }
-  };
+};
   
 
 
