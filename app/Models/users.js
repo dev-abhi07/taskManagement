@@ -1,8 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
-
-
-const users = sequelize.define("user", {
+const users = sequelize.define("users", {
   name: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -41,14 +39,5 @@ const users = sequelize.define("user", {
     defaultValue: 0,
   }
 });
-// sequelize
-//     .sync({force:true})
-//     .then(() => {
-//         console.log("Database & tables created!");
-//     })
-//     .catch((error) => {
-//         console.error("Error creating database & tables:", error);
-//     });
-
 
 module.exports = users;

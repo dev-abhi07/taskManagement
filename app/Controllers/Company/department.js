@@ -1,7 +1,8 @@
+
+
 const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
-
-
+        
 exports.createDepartment = async (req, res, next) => {
     const { name } = req.body;
     try {
@@ -27,14 +28,12 @@ exports.createDepartment = async (req, res, next) => {
 
     } catch (error) {
         return Helper.response("failed", error, [], res, 500)
-
     }
 
 }
 
 exports.getDepartments = async (req, res) => {
-    const { id } = req.body;
-
+    const {id} = req.body;
     try {
         if (id) {
             const departmentsById = await department.findOne({ where: { id: id } })
@@ -84,6 +83,7 @@ exports.updateDepartment = async (req, res) => {
 }
 
 exports.deleteDepartment = async (req, res) => {
+
     try {
         const { id } = req.body;
         const isExists = await department.count({ where: { id: id } });

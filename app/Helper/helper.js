@@ -1,7 +1,6 @@
 const Helper = {};
 const CryptoJS = require("crypto-js");
 const users = require("../Models/users");
-
 Helper.response = (status, message, data = [], res, statusCode) => {
   res.status(statusCode).json({
     status: status,
@@ -22,6 +21,7 @@ Helper.decryptPassword = (password) => {
   return originalPassword;
 };
 
+<
 Helper.getUserId = async (req) => {
   const token = req.headers['authorization'];
   const string = token.split(" ");

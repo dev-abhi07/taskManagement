@@ -7,6 +7,14 @@ const { registerHierarchy } = require('../Controllers/Company/company')
 const router = express.Router()
 
 router.post('/register',register)
+router.post('/create-department',createDepartment)
+router.post('/get-department',getDepartments)
+router.post('/update-department',updateDepartment)
+router.post('/delete-department',deleteDepartment)
+router.post('/create-designation',createDesignation)
+router.post('/designation-list',getDesignations)
+router.post('/update-designation',updateDesignation)
+router.post('/delete-designation',deleteDesignation)
 
 //Department
 router.post('/create-department',createDepartment)

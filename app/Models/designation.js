@@ -1,19 +1,19 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
+const department = require("./department");
+
 
 const designation = sequelize.define('designation',{
     company_id:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
+
     department_id:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    name:{
-        type:DataTypes.STRING,
-        allowNull:false
-    },
+
     status:{
         type:DataTypes.BOOLEAN,
         allowNull:false,
@@ -36,4 +36,5 @@ const designation = sequelize.define('designation',{
 
 
 module.exports = designation
+
 

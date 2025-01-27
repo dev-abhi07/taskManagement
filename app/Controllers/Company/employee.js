@@ -47,5 +47,3 @@ exports.register = async (req, res) => {
     Helper.response('failed', err, [], res, 500);
   }
 };
-
-

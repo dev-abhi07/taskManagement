@@ -1,11 +1,14 @@
+
+
+
 const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
-
 const designation = require("../../Models/designation");
 
 
 
 exports.createDesignation = async (req, res) => {
+
     const { name, department_id, status } = req.body;
 
     try {
@@ -15,6 +18,7 @@ exports.createDesignation = async (req, res) => {
         const designations = await designation.create({
             name: name,
             company_id: req.headers['x-id'],
+
             status: status,
             department_id: department_id,
             created_by: req.headers['x-id']
@@ -30,6 +34,7 @@ exports.createDesignation = async (req, res) => {
 }
 
 exports.getDesignations = async (req, res) => {
+   
     const { id, department_id } = req.body;
     try {
         if (!department_id || !id) {
@@ -131,7 +136,6 @@ exports.designationsList = async (req, res) => {
     }
 };
   
-
 
 
 
