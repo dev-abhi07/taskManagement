@@ -34,4 +34,6 @@ const designation = sequelize.define('designation',{
 //     console.error("Error creating database & tables:", error);
 //   });
 
+
 module.exports = designation
+
