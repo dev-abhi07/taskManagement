@@ -36,13 +36,17 @@ exports.getDepartments = async (req, res) => {
     const {id} = req.body;
     try {
         if (id) {
-            const departmentsById = await department.findOne({ where: { id: id } })
+            const departmentsById = await department.findOne({ where: { id: id,company_id:req.headers['x-id']    } })
             if (!departmentsById) {
                 return Helper.response("failed", "No departments found", [], res, 200)
             }
             return Helper.response("success", "Departments found", departmentsById, res, 200)
         }
-        const departments = await department.findAll()
+        const departments = await department.findAll({
+            where: {
+                company_id: req.headers['x-id'],
+            }
+        })
         if (!departments) {
             return Helper.response("failed", "No departments found", [], res, 200)
         }
