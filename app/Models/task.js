@@ -6,6 +6,10 @@ const task = sequelize.define('task',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
+    user_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
     task_title:{
         type:DataTypes.STRING,
         allowNull:false

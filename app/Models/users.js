@@ -23,8 +23,8 @@ const users = sequelize.define("users", {
     allowNull: false,
   },
   role: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+    type:DataTypes.ENUM('admin', 'company', 'employee'),
+    allowNull:false
   },
   password: {
     type: DataTypes.STRING,
@@ -37,6 +37,11 @@ const users = sequelize.define("users", {
   created_by: {
     type: DataTypes.BIGINT,
     defaultValue: 0,
+  },
+  status:{
+    type:DataTypes.BOOLEAN,
+    defaultValue:true,
+    allowNull:false
   }
 });
 

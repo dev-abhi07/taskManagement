@@ -8,12 +8,14 @@ const designation = sequelize.define('designation',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-
+    name:{
+        type:DataTypes.STRING(50),
+        allowNull:false,
+    },
     department_id:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-
     status:{
         type:DataTypes.BOOLEAN,
         allowNull:false,
@@ -24,17 +26,6 @@ const designation = sequelize.define('designation',{
         allowNull:false
     }
 })
-
-// sequelize
-//   .sync({force:true})
-//   .then(() => {
-//     console.log("Database & tables created!");
-//   })
-//   .catch((error) => {
-//     console.error("Error creating database & tables:", error);
-//   });
-
-
 module.exports = designation
 
 
