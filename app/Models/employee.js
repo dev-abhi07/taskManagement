@@ -28,7 +28,7 @@ const employee = sequelize.define("employee", {
   },
   reporting_to:{
     type:DataTypes.BIGINT,
-    allowNull:false
+     defaultValue:0,
   },
   created_by:{
     type:DataTypes.BIGINT,
@@ -36,6 +36,7 @@ const employee = sequelize.define("employee", {
 }
 
 });
+// sequelize.sync({alter:true})
 // sequelize
 //   .sync({force:true})
 //   .then(() => {
