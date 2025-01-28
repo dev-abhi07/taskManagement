@@ -10,7 +10,6 @@ const designation = require("../../Models/designation");
 exports.createDesignation = async (req, res) => {
     const { name, department_id, status } = req.body;
     
-
     try {
         const isExists = await designation.count({ where: { name:name } });
         if (isExists > 0) {
@@ -113,7 +112,9 @@ exports.deleteDesignation = async (req, res) => {
 
 exports.designationsList = async (req, res) => {
     try {
-      const designations = await designation.findAll();
+      const designations = await designation.findAll({
+        where: { company_id: req.headers['x-id'] },
+      });
   
       if (!designations) {
         return Helper.response(

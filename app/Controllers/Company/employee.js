@@ -6,14 +6,14 @@ const users = require("../../Models/users");
 
 
 exports.register = async (req, res) => {
-  const { fname,lname, email, mobile,department_id,designation_id,reporting_to} = req.body;
+  const { fname,lname, email, mobile,department_id,designation_id} = req.body;
   const company_id = req.headers["x-id"];
   try {
     const companyExists = await company.findOne({
       where: { company_id },
     });
     if (!companyExists) {
-      return Helper.response('failed','comapny not found',[],res,200);
+      return Helper.response('failed','company not found',[],res,200);
     }
 
     const user = await users.findOne({
@@ -24,6 +24,16 @@ exports.register = async (req, res) => {
       return Helper.response('failed','users not found',[],res,200);
     }
 
+    const employeeData = await employee.findOne({
+      where:{
+        department_id:department_id,
+        designation_id:designation_id,
+      },
+      attributes:['name']
+    })
+
+
+
     const AddEmployee = await employee.create({
       company_id:company_id,
       user_id:user?.id,
@@ -32,7 +42,7 @@ exports.register = async (req, res) => {
       mobile: mobile.trim(),
       department_id:department_id.trim(),
       designation_id:designation_id.trim(),
-      reporting_to:reporting_to.trim(),
+      reporting_to:employeeData,
       created_by:company_id,
     })
 
@@ -90,7 +100,7 @@ exports.departmenetDesignationBasedEmployee = async (req, res) => {
      const data = await Promise.all(
        designationData.map(async (item) => {
          return {
-           name: item?.name,
+           label: item?.name,
            value: item?.id,
          };
        })
@@ -100,4 +110,40 @@ exports.departmenetDesignationBasedEmployee = async (req, res) => {
    }catch(err){
    return  Helper.response('failed', err, [], res, 500);
    }
+}
+
+
+exports.getReportDepartmentAndDesignation = async(req,res)=>{
+  const {department_id,designation_id } = req.body;
+  try{
+    if(!department_id || !designation_id){
+      return Helper.response('failed', "Please provide department Id and designation Id", [], res,200)
+    }
+
+    const employeeDetails = await employee.findAll({
+      where:{
+        department_id:department_id,
+        designation_id:designation_id
+      }
+    })
+    const employeeData = employeeDetails.map((item)=>item.toJSON());
+    const data = await Promise.all(
+      employeeData.map(async (item) => {
+        return {
+          ...item
+        }
+      }
+    ))
+
+    if(!employeeData){
+      return Helper.response('failed', "No employee found", [], res, 200);
+    }
+
+    return Helper.response('success','data found successfully',data,res,200)
+
+
+
+  }catch(err){
+    return Helper.response('failed',err,[],res,500)
+  }
 }
