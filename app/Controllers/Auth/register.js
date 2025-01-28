@@ -1,6 +1,7 @@
 const users = require("../../Models/users");
 const company = require("../../Models/company");
 const Helper = require("../../Helper/helper");
+const { Op } = require("sequelize");
 
 exports.companyRegister = async (req, res, next) => {
   try {
@@ -17,6 +18,19 @@ exports.companyRegister = async (req, res, next) => {
     } = req.body;
 
     
+    const existingCompany = await company.findOne({
+      where: {
+        [Op.or]: [
+          { email: email },
+          { contact_number: contact_number }
+        ]
+      }
+    });
+
+    if (existingCompany) {
+      return Helper.response("failed", "Company already exists", {}, res, 200);
+    }
+
     const companies = await company.create({
       company_name: company_name,
       email: email,
@@ -26,9 +40,20 @@ exports.companyRegister = async (req, res, next) => {
       subscription_start: subscription_start,
       subscription_end: subscription_end,
       status: status,
-      created_by:1
+      created_by: 1
     });
     if (companies) {
+      const user = await users.findOne({
+        where: {
+          [Op.or]: [
+            { email: email },
+            { mobile: contact_number }
+          ]
+        }
+      })
+      if(user){
+         return Helper.response("failed", "User already exists", {}, res, 200)
+      }
       const userEntry = await users.create({
         name: companies.company_name,
         company_id: companies.id,
@@ -45,10 +70,10 @@ exports.companyRegister = async (req, res, next) => {
         Helper.response("failed", "Unable to create company", {}, res, 200)
       }
     } else {
-      Helper.response("failed", "Database Error", {}, res, 500)
+      Helper.response("failed", "Database Error", {}, res, 200)
     }
   } catch (err) {
-    Helper.response("failed", "Database Error", err, res, 500)
+    Helper.response("failed", err.message, [], res, 200)
   }
 };
 
