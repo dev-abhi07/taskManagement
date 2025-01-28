@@ -20,6 +20,7 @@ const department = sequelize.define('department',{
         defaultValue:true
     }
 })
+
 // sequelize
 //   .sync({force:true})
 //   .then(() => {

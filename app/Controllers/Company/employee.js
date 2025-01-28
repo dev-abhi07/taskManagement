@@ -1,9 +1,11 @@
+const Helper = require("../../Helper/helper");
 const company = require("../../Models/company");
 const employee = require("../../Models/employee");
 const users = require("../../Models/users");
 
 exports.register = async (req, res) => {
-  const { company_id, name, email, mobile } = req.body;
+  const { name, email, mobile,department_id,designation_id,reporting_to,role} = req.body;
+  const company_id = req.headers["x-id"];
   try {
     const companyExists = await company.findOne({
       where: { company_id },
@@ -14,38 +16,34 @@ exports.register = async (req, res) => {
 
     const user = await users.create({
       name: name,
-      company_id: company_id,
+      company_id:req.headers["x-id"],
       email: email,
       mobile: mobile,
-      role: 2,
+      role:role,
       password: "123",
-      created_by: company_id,
+      created_by: req.headers["x-id"],
     });
 
     if (user) {
       const emp = await employee.create({
         user_id: user.id,
-        company_id,
+        company_id:req.headers["x-id"],
         name,
         email,
-        department_id: 0,
-        designation_id: 0,
+        reporting_to: reporting_to,
+        department_id: department_id,
+        designation_id: designation_id,
+        created_by: req.headers["x-id"],
       });
       if (emp) {
-        res.status(200).json({
-          message: "Employee created successfully",
-          data: user,
-        });
+        Helper.response('success', "Employee created successfully", emp, res, 200);
+         
+        };
       } else {
-        res.status(200).json({
-          message: "Failed to create employee",
-        });
+        Helper.response('failed', "Failed to create employee", [], res, 200);
       }
     }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: err.message,
-    });
+   catch (err) {
+    Helper.response('failed', err, [], res, 500);
   }
 };

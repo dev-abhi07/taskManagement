@@ -1,5 +1,5 @@
 const employee = require("../../Models/employee");
-const employees_hierarchy = require("../../Models/employees_hierarchy");
+// const employees_hierarchy = require("../../Models/employees_hierarchy");
 const department = require("../../Models/department");
 const company = require("../../Models/company");
 
