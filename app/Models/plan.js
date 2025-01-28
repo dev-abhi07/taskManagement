@@ -15,8 +15,8 @@ const plan = sequelize.define("plan", {
         allowNull:false
     },
     max_users: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
+       type: DataTypes.BIGINT,
+       allowNull: false,
     },
     billing_cycle:{
         type:DataTypes.STRING,
@@ -40,12 +40,13 @@ const plan = sequelize.define("plan", {
         defaultValue:false
     }
 });
-sequelize
-    .sync()
-    .then(() => {
-        console.log("Database & tables created!");
-    })
-    .catch((error) => {
-        console.error("Error creating database & tables:", error);
-    });
+
+// sequelize
+//     .sync()
+//     .then(() => {
+//         console.log("Database & tables created!");
+//     })
+//     .catch((error) => {
+//         console.error("Error creating database & tables:", error);
+//     });
 module.exports = plan
