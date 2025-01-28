@@ -8,59 +8,67 @@ const designation = require("../../Models/designation");
 
 
 exports.createDesignation = async (req, res) => {
-
     const { name, department_id, status } = req.body;
+    
 
     try {
-        if (!name) {
-            return Helper.response("failed", "Please provide all required fields", [], res, 200)
+        const isExists = await designation.count({ where: { name:name } });
+        if (isExists > 0) {
+            return Helper.response("failed", name + " already exists", [], res, 200);
         }
-        const designations = await designation.create({
-            name: name,
-            company_id: req.headers['x-id'],
+        if (!name || !department_id || !req.headers['x-id']) {
+            return Helper.response("failed", "Please provide all required fields", [], res, 200);
+        }
 
+      
+
+        const designations = await designation.create({
+            name: name.trim(),
+            company_id: req.headers['x-id'],
             status: status,
             department_id: department_id,
             created_by: req.headers['x-id']
         });
-        if (designations) {
-            return Helper.response("success", "Designation created successfully", designations, res, 200)
-        } else {
-            return Helper.response("failed", "Failed to create designation", [], res, 200)
-        }
-    } catch (error) {
-        return Helper.response("failed", error, [], res, 500)
-    }
-}
 
-exports.getDesignations = async (req, res) => {
-   
-    const { id, department_id } = req.body;
-    try {
-        if (!department_id || !id) {
-            return Helper.response("failed", "Please provide all required fields", [], res, 200)
-        }
-        if (id && department_id) {
-            const designationsById = await designation.findOne({ where: { id: id } })
-            const departments = await department.findOne({ where: { id: department_id } })
-            if (!departments) {
-                return Helper.response("failed", "No departments found", [], res, 200)
-            }
-            const departmentName = departments ? departments.name : null;
-            const data = {
-                departmentName: departmentName,
-                ...designationsById,
-            };
-            if (!designationsById) {
-                return Helper.response("failed", "No designations found", [], res, 200)
-            }
-            return Helper.response("success", "Designations found", data, res, 200)
+        if (designations) {
+            return Helper.response("success", "Designation created successfully", designations, res, 200);
+        } else {
+            return Helper.response("failed", "Failed to create designation", [], res, 200);
         }
     } catch (error) {
-        console.log(error)
-        return Helper.response("failed", error, [], res, 500)
+        console.error("Error in createDesignation:", error); // Log the error for debugging
+        return Helper.response("failed", error.message, [], res, 500);
     }
-}
+};
+
+// exports.getDesignations = async (req, res) => {
+   
+//     const { id, department_id } = req.body;
+//     try {
+//         if (!department_id || !id) {
+//             return Helper.response("failed", "Please provide all required fields", [], res, 200)
+//         }
+//         if (id && department_id) {
+//             const designationsById = await designation.findOne({ where: { id: id } })
+//             const departments = await department.findOne({ where: { id: department_id } })
+//             if (!departments) {
+//                 return Helper.response("failed", "No departments found", [], res, 200)
+//             }
+//             const departmentName = departments ? departments.name : null;
+//             const data = {
+//                 departmentName: departmentName,
+//                 ...designationsById,
+//             };
+//             if (!designationsById) {
+//                 return Helper.response("failed", "No designations found", [], res, 200)
+//             }
+//             return Helper.response("success", "Designations found", data, res, 200)
+//         }
+//     } catch (error) {
+//         console.log(error)
+//         return Helper.response("failed", error, [], res, 500)
+//     }
+// }
 
 exports.updateDesignation = async (req, res) => {
     try {
@@ -135,6 +143,9 @@ exports.designationsList = async (req, res) => {
       return Helper.response("failed", err, [], res, 500);
     }
 };
+
+
+
   
 
 
