@@ -15,7 +15,7 @@ exports.createDepartment = async (req, res, next) => {
             return Helper.response("failed", req.body.name + " already exists", [], res, 200)
         }
         const departments = await department.create({
-            name: name,
+            name: name.trim(),
             company_id: req.headers['x-id'],
             created_by: req.headers['x-id'],
             status: true
