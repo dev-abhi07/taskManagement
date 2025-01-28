@@ -9,7 +9,8 @@ const employee = require("../Models/employee");
 const plan = require("../Models/plan");
 const project = require('../Models/project');
 const task = require("../Models/task");
-const board = require("./board");
+const board = require("../Models/board");
+const priority = require("./priority");
 
 
 const synchronize = sequelize.sync({ alter: true }).then(() => {
