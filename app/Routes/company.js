@@ -3,7 +3,7 @@ const { register, departmentDesignationBasedEmployee } = require('../Controllers
 
 const { createDepartment, getDepartments, updateDepartment, deleteDepartment } = require('../Controllers/Company/department')
 const { createDesignation, updateDesignation, deleteDesignation, designationsList } = require('../Controllers/Company/designation')
-const { registerHierarchy } = require('../Controllers/Company/company')
+const { registerHierarchy, createProject, getProject, deleteProject, updateProject } = require('../Controllers/Company/company')
 const router = express.Router()
 
 router.post('/register',register)
@@ -29,4 +29,10 @@ router.post('/delete-designation',deleteDesignation)
 //Employee
 router.post('/get-designation-by-department',departmentDesignationBasedEmployee)
 
+
+//Project
+router.post('/create-project',createProject);
+router.get('/get-project',getProject);
+router.delete('/delete-project',deleteProject);
+router.post('/update-project',updateProject);
 module.exports = router
