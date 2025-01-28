@@ -7,22 +7,17 @@ const designation = require("../Models/designation");
 const payment = require("../Models/payment");
 const employee = require("../Models/employee");
 const plan = require("../Models/plan");
-const emp_hierarchy = require("../Models/employees_hierarchy");
+const project = require('../Models/project');
+const task = require("../Models/task");
+const board = require("./board");
 
 
-
-
-
-
-
-
-
-const synchronize = sequelize.sync({alter:true}).then(()=>{
+const synchronize = sequelize.sync({ alter: true }).then(() => {
     console.log('All table connected');
-    
-   }).catch((err)=>{
-   console.log(err.message);
-   
-   })
-   
+
+}).catch((err) => {
+    console.log(err.message);
+
+})
+
 module.exports = synchronize

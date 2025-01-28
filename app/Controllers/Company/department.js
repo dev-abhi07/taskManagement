@@ -1,8 +1,6 @@
-
-
 const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
-        
+
 exports.createDepartment = async (req, res, next) => {
     const { name } = req.body;
     try {
@@ -10,12 +8,12 @@ exports.createDepartment = async (req, res, next) => {
         if (!name || !req.headers['x-id']) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
-        const isExists = await department.count({ where: { name: req.body.name } });
+        const isExists = await department.count({ where: { name: req.body.name,company_id:req.headers['x-id'] } });
         if (isExists > 0) {
             return Helper.response("failed", req.body.name + " already exists", [], res, 200)
         }
         const departments = await department.create({
-            name: name,
+            name: name.trim(),
             company_id: req.headers['x-id'],
             created_by: req.headers['x-id'],
             status: true
@@ -33,16 +31,20 @@ exports.createDepartment = async (req, res, next) => {
 }
 
 exports.getDepartments = async (req, res) => {
-    const {id} = req.body;
+    const { id } = req.body;
     try {
         if (id) {
-            const departmentsById = await department.findOne({ where: { id: id } })
+            const departmentsById = await department.findOne({ where: { id: id, company_id: req.headers['x-id'] } })
             if (!departmentsById) {
                 return Helper.response("failed", "No departments found", [], res, 200)
             }
             return Helper.response("success", "Departments found", departmentsById, res, 200)
         }
-        const departments = await department.findAll()
+        const departments = await department.findAll({
+            where: {
+                company_id: req.headers['x-id'],
+            }
+        })
         if (!departments) {
             return Helper.response("failed", "No departments found", [], res, 200)
         }
@@ -65,7 +67,7 @@ exports.updateDepartment = async (req, res) => {
             name: req.body.name,
             company_id: req.headers['x-id'],
             created_by: req.headers['x-id'],
-            status:req.body.status
+            status: req.body.status
         }
         if (!id || !updateData) {
             return Helper.response("success", "Please provide all required fields", [], res, 200)

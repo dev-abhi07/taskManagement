@@ -1,0 +1,44 @@
+const { DataTypes } = require("sequelize");
+const sequelize = require("../Connection/sequelize");
+
+const task = sequelize.define('task',{
+    company_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
+    task_title:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+    task_description:{
+        type:DataTypes.TEXT,
+        allowNull:false
+    },
+    project_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
+    assign_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
+    priority:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
+    due_date:{
+        type:DataTypes.STRING(25),
+        allowNull:false
+    },
+    board_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
+    status:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue:false
+    },
+})
+
+module.exports = task
