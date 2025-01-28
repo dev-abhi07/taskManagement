@@ -21,7 +21,6 @@ Helper.decryptPassword = (password) => {
   return originalPassword;
 };
 
-<
 Helper.getUserId = async (req) => {
   const token = req.headers['authorization'];
   const string = token.split(" ");

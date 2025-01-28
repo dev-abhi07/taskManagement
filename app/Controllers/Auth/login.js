@@ -3,8 +3,6 @@ const department = require("../../Models/department");
 const jwt = require("jsonwebtoken");
 const Helper = require("../../Helper/helper");
 const users = require("../../Models/users");
-const jwt = require("jsonwebtoken");
-const Helper = require("../../Helper/helper");
 
 
 exports.login = async (req, res) => {
