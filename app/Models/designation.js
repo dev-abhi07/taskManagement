@@ -14,6 +14,11 @@ const designation = sequelize.define('designation',{
         allowNull:false
     },
 
+    name:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+
     status:{
         type:DataTypes.BOOLEAN,
         allowNull:false,
