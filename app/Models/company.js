@@ -2,6 +2,14 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
 
 const company  = sequelize.define('company',{
+    fname:{
+        type:DataTypes.STRING(20),
+        allowNull:false
+    },
+    lname:{
+        type:DataTypes.STRING(20),
+        allowNull:false
+    },
     company_name:{
         type:DataTypes.STRING,
         allowNull:false
@@ -30,10 +38,7 @@ const company  = sequelize.define('company',{
         type:DataTypes.STRING,
         allowNull:false
     },
-    status:{
-        type:DataTypes.STRING,
-        allowNull:false
-    },
+
     created_by:{
         type:DataTypes.BIGINT,
         allowNull:false

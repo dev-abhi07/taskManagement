@@ -13,6 +13,7 @@ const board = require("../Models/board");
 const priority = require("./priority");
 
 
+
 const synchronize = sequelize.sync({ alter: true }).then(() => {
     console.log('All table connected');
 

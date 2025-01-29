@@ -3,7 +3,7 @@ const department = require("../../Models/department");
 const designation = require("../../Models/designation");
 
 exports.createDesignation = async (req, res) => {
-    const { name, department_id, status } = req.body;
+    const { name, department_id } = req.body;
 
     try {
         const isExists = await designation.count({ where: { name: name, company_id: req.headers['x-id'] } });
@@ -17,9 +17,8 @@ exports.createDesignation = async (req, res) => {
 
 
         const designations = await designation.create({
-            name: name.trim(),
+            name: req.body.name.trim(),
             company_id: req.headers['x-id'],
-            status: status,
             department_id: department_id,
             created_by: req.headers['x-id']
         });
@@ -99,7 +98,7 @@ exports.designationsList = async (req, res) => {
                     where: { id: item.department_id },
                 });
                 return {
-                    department_name: departments?.name,
+                    department_name: departments.name,
                     ...item,
                 };
             })
