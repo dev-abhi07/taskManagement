@@ -6,7 +6,7 @@ const project = sequelize.define('projects',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    project_tile:{
+    project_title:{
         type:DataTypes.STRING,
         allowNull:false
     },
@@ -22,8 +22,12 @@ const project = sequelize.define('projects',{
         type:DataTypes.STRING(25),
         allowNull:false,
     },
+    department_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
     team_members:{
-        type:DataTypes.STRING(50),
+        type:DataTypes.ARRAY(DataTypes.BIGINT),
         allowNull:false
     },
     team_lead:{

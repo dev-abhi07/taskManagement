@@ -6,6 +6,10 @@ const board = sequelize.define('board', {
         type: DataTypes.BIGINT,
         allowNull: false
     },
+    user_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
     board_name: {
         type: DataTypes.STRING(50),
         allowNull: false

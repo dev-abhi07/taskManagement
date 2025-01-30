@@ -1,12 +1,13 @@
 const Helper = require("../../Helper/helper");
+const companyStructure = require("../../Models/companyStructure");
 const department = require("../../Models/department");
 const designation = require("../../Models/designation");
 
 exports.createDesignation = async (req, res) => {
-    const { name, department_id, status } = req.body;
+    const { name, department_id,level_id } = req.body;
 
     try {
-        const isExists = await designation.count({ where: { name: name, company_id: req.headers['x-id'] } });
+        const isExists = await designation.count({ where: { name: name, level:level_id,company_id: req.headers['x-id'] } });
         if (isExists > 0) {
             return Helper.response("failed", name + " already exists", [], res, 200);
         }
@@ -17,11 +18,11 @@ exports.createDesignation = async (req, res) => {
 
 
         const designations = await designation.create({
-            name: name.trim(),
+            name: req.body.name.trim(),
             company_id: req.headers['x-id'],
-            status: status,
             department_id: department_id,
-            created_by: req.headers['x-id']
+            created_by: req.headers['x-id'],
+            level:level_id
         });
 
         if (designations) {
@@ -91,19 +92,27 @@ exports.designationsList = async (req, res) => {
             );
         }
 
-        const designationData = designations.map((data) => data.toJSON());
-
-        const data = await Promise.all(
-            designationData.map(async (item) => {
-                const departments = await department.findOne({
-                    where: { id: item.department_id },
-                });
-                return {
-                    department_name: departments?.name,
-                    ...item,
-                };
-            })
-        );
+        //console.log(designations,255)
+        const data = []
+        await Promise.all(designations.map(async(t) => {
+            const departments = await department.findOne({
+                where: { id: t.department_id , company_id: req.headers['x-id']},
+            });
+            const level = await companyStructure.findOne({
+                where:{
+                    id:t.level,
+                    company_id: req.headers['x-id']
+                }
+            })           
+            const values = {
+                ...t.dataValues,
+                department_name:departments.name,
+                level_name:level?.name,
+                level_id:level?.id
+            }
+            
+            data.push(values)
+        }))
         return Helper.response("success", "Designations list", data, res, 200);
     } catch (err) {
         return Helper.response("failed", err, [], res, 500);

@@ -1,22 +1,20 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
-const department = require("./department");
 
-
-const designation = sequelize.define('designation',{
+const priority = sequelize.define('priority',{
     company_id:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    name:{
+    priority_name:{
         type:DataTypes.STRING(50),
-        allowNull:false,
-    },
-    department_id:{
-        type:DataTypes.BIGINT,
         allowNull:false
     },
-    level:{
+    color_code:{
+        type:DataTypes.STRING(10),
+        allowNull:false
+    },
+    created_by:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
@@ -24,12 +22,7 @@ const designation = sequelize.define('designation',{
         type:DataTypes.BOOLEAN,
         allowNull:false,
         defaultValue:true
-    },
-    created_by:{
-        type:DataTypes.BIGINT,
-        allowNull:false
     }
+
 })
-module.exports = designation
-
-
+module.exports = priority
