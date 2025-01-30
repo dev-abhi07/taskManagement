@@ -8,6 +8,7 @@ const { createCompanyStructure, getAllCompanyLevels, updateCompanyStructure, del
 const { createProject, getProject, deleteProject, updateProject } = require('../Controllers/Company/project')
 const { createPriority, getPriority, deletePriority, updatePriority } = require('../Controllers/Company/priority')
 const { createTask, getTask, deleteTask, updateTask } = require('../Controllers/Company/task')
+const { createBoard, boardList, updateBoard, deleteBoard } = require('../Controllers/Company/board')
 
 const router = express.Router()
 
@@ -18,6 +19,13 @@ router.post('/department-list',getDepartments)
 router.post('/update-department',updateDepartment)
 router.post('/delete-department',deleteDepartment)
 router.post('/get-team-by-department-dd',getDepartmentNameById)
+
+
+//boards
+router.post('/create-board',createBoard)
+router.post('/board-list',boardList)
+router.post('/update-board',updateBoard)
+router.post('/delete-board',deleteBoard)
 
 //Employee
 router.post('/register-employee',register)

@@ -1,5 +1,7 @@
 const Helper = require("../../Helper/helper");
+const department = require("../../Models/department");
 const project = require('../../Models/project')
+
 
 
 exports.createProject = async (req, res) => {
@@ -7,36 +9,51 @@ exports.createProject = async (req, res) => {
         project_title,
         project_description,
         start_date,
-        end_date,
-        team_members,
-        team_lead,
+        deadline,
+        department_id,
+        team,
+        team_lead_id,
     } = req.body;
 
-    try {
 
-        const parsedTeamMembers = Array.isArray(team_members)
-            ? team_members.map((value) => BigInt(value))
-            : team_members
+
+    try {
+        const dep = await department.findOne({
+            where: { id: department_id, company_id: req.headers['x-id'] }
+        })
+
+        const parsedTeamMembers = Array.isArray(team)
+            ? team.map((value) => BigInt(value))
+            : team
                 .split(',')
                 .map((value) => BigInt(value.trim()));
 
+        const parsedTeamLead = BigInt(team_lead_id); // Ensure team_lead is BigInt
 
         const proj = await project.create({
             company_id: req.headers['x-id'],
             project_title,
             project_description,
+            department_id,
             start_date,
-            end_date,
+            end_date:deadline,
             team_members: parsedTeamMembers,
-            team_lead,
+            team_lead: parsedTeamLead,
             created_by: req.headers['x-id'],
             status: true,
         });
 
         if (proj) {
-            Helper.response("success", "Project created successfully", proj, res, 200);
+            // Convert BigInt values to Strings before sending response
+            const responseData = {
+                ...proj.get({ plain: true }), // Convert Sequelize object to plain object
+                team_members: parsedTeamMembers.map((id) => id.toString()),
+                team_lead: parsedTeamLead.toString()
+            };
+
+            return Helper.response("success", "Project created successfully", responseData, res, 200);
         } else {
-            Helper.response("failed", "Failed to create project", [], res, 200);
+            return Helper.response("failed", "Failed to create project", [], res, 200);
         }
     } catch (err) {
         console.error("Error creating project:", err);

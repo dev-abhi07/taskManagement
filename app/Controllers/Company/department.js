@@ -125,9 +125,9 @@ exports.getDepartmentNameById = async (req, res) => {
                 company_id:req.headers['x-id']
             }
         })
-        
+
         const departmentData = empData.map(dept => ({
-            value: dept.department_id, 
+            value: dept.user_id, 
             label: dept.name
         }));
 
