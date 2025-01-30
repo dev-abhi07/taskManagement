@@ -33,16 +33,12 @@ const employee = sequelize.define("employee", {
   created_by:{
     type:DataTypes.BIGINT,
     allowNull:false
-}
-
+},
+// status:{
+//   type:DataTypes.BOOLEAN,
+//   allowNull:false,
+//   defaultValue:true
+// },
 });
-// sequelize.sync({alter:true})
-// sequelize
-//   .sync({force:true})
-//   .then(() => {
-//     console.log("Database & tables created!");
-//   })
-//   .catch((error) => {
-//     console.error("Error creating database & tables:", error);
-//   });
+
 module.exports = employee

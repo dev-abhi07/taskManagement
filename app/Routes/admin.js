@@ -1,9 +1,9 @@
 const express = require("express");
-const { planList, demoPlan } = require("../Controllers/Admin/plan");
+const { planList} = require("../Controllers/Admin/plan");
 const router = express.Router();
 
 router.post('/plan-list',planList)
-router.post('/demo-plan',demoPlan)
+// router.post('/demo-plan',demoPlan)
 
 
 module.exports = router;

@@ -11,7 +11,7 @@ exports.createDesignation = async (req, res) => {
     const { name, department_id, status } = req.body;
     
     try {
-        const isExists = await designation.count({ where: { name:name } });
+        const isExists = await designation.findOne({ where: { name:name,company_id:req.headers['x-id'] } });
         if (isExists > 0) {
             return Helper.response("failed", name + " already exists", [], res, 200);
         }
@@ -35,7 +35,7 @@ exports.createDesignation = async (req, res) => {
             return Helper.response("failed", "Failed to create designation", [], res, 200);
         }
     } catch (error) {
-        console.error("Error in createDesignation:", error); // Log the error for debugging
+        console.error("Error in createDesignation:", error); 
         return Helper.response("failed", error.message, [], res, 500);
     }
 };
@@ -98,7 +98,7 @@ exports.deleteDesignation = async (req, res) => {
         if (!id) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
-        const designationDelete = await designation.destroy({ where: { id: id } })
+        const designationDelete = await designation.destroy({ where: { id: id,company_id:req.headers['x-id'] } })
         if (designationDelete) {
             return Helper.response("success", "Designation deleted successfully", designationDelete, res, 200)
         } else {

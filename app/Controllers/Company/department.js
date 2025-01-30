@@ -10,7 +10,8 @@ exports.createDepartment = async (req, res, next) => {
         if (!name || !req.headers['x-id']) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
-        const isExists = await department.count({ where: { name: req.body.name } });
+        
+        const isExists = await department.count({ where: { name: req.body.name,company_id:req.headers['x-id'] } });
         if (isExists > 0) {
             return Helper.response("failed", req.body.name + " already exists", [], res, 200)
         }
@@ -72,7 +73,7 @@ exports.updateDepartment = async (req, res) => {
             status:req.body.status
         }
         if (!id || !updateData) {
-            return Helper.response("success", "Please provide all required fields", [], res, 200)
+            return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
         const [updatedRows] = await department.update(updateData, { where: { id: id } })
         if (updatedRows === 0) {

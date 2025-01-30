@@ -6,6 +6,14 @@ const company  = sequelize.define('company',{
         type:DataTypes.STRING,
         allowNull:false
     },
+    fname:{
+        type:DataTypes.STRING(20),
+        allowNull:false
+    },
+    lname:{
+        type:DataTypes.STRING(20),
+        allowNull:false
+    },
     email:{
         type:DataTypes.STRING,
         allowNull:false
@@ -27,10 +35,6 @@ const company  = sequelize.define('company',{
         allowNull:false,
     },
     subscription_end:{
-        type:DataTypes.STRING,
-        allowNull:false
-    },
-    status:{
         type:DataTypes.STRING,
         allowNull:false
     },

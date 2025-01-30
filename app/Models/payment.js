@@ -31,12 +31,5 @@ const payment = sequelize.define('payments',{
         allowNull:false
     }
 })
-// sequelize
-//     .sync()
-//     .then(() => {
-//         console.log("Database & tables created!");
-//     })
-//     .catch((error) => {
-//         console.error("Error creating database & tables:", error);
-//     });
+
 module.exports = payment;

@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
     if (!user) {
       return Helper.response("failed", "User not exists!", {}, res, 200);
     }
-    if (data.password === user.password) {
+    if (data.password === Helper.decryptPassword(user.password)) {
       let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
         expiresIn: "2h",
       });
