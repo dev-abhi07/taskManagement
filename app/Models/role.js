@@ -12,12 +12,5 @@ const role = sequelize.define("role", {
     allowNull: true,
   },
 });
-// sequelize
-//   .sync()
-//   .then(() => {
-//     console.log("Database & tables created!");
-//   })
-//   .catch((error) => {
-//     console.error("Error creating database & tables:", error);
-//   });
+
 module.exports = role;

@@ -1,4 +1,23 @@
 const express = require('express')
+
+const { register,departmentDesignationBasedEmployee, getReportDepartmentAndDesignation } = require('../Controllers/Company/employee')
+
+const { createDepartment, getDepartments, updateDepartment, deleteDepartment } = require('../Controllers/Company/department')
+const { createDesignation, getDesignations, updateDesignation, deleteDesignation, designationsList } = require('../Controllers/Company/designation')
+const { registerHierarchy } = require('../Controllers/Company/company')
+const { createBoard, boardList, updateBoard, deleteboard } = require('../Controllers/Company/board')
+const router = express.Router()
+
+router.post('/register-employee',register)
+// router.post('/create-department',createDepartment)
+// router.post('/get-department',getDepartments)
+// router.post('/update-department',updateDepartment)
+// router.post('/delete-department',deleteDepartment)
+// router.post('/create-designation',createDesignation)
+// // router.post('/designation-list',getDesignations)
+// router.post('/update-designation',updateDesignation)
+// router.post('/delete-designation',deleteDesignation)
+
 const { register, departmentDesignationBasedEmployee,getReportDepartmentAndDesignation } = require('../Controllers/Company/employee')
 
 const { createDepartment, getDepartments, updateDepartment, deleteDepartment, getDepartmentNameById } = require('../Controllers/Company/department')
@@ -30,6 +49,13 @@ router.post('/create-designation',createDesignation)
 router.post('/designation-list',designationsList)
 router.post('/update-designation',updateDesignation)
 router.post('/delete-designation',deleteDesignation)
+
+
+//boards
+router.post('/create-board',createBoard)
+router.post('/board-list',boardList)
+router.post('/update-board',updateBoard)
+router.post('/delete-board',deleteboard)
 
 
 //Employee
@@ -66,6 +92,7 @@ router.post('/create-task',createTask);
 router.get('/get-task',getTask);
 router.delete('/delete-task',deleteTask);
 router.post('/update-task',updateTask);
+
 
 
 module.exports = router
