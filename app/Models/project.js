@@ -22,6 +22,10 @@ const project = sequelize.define('projects',{
         type:DataTypes.STRING(25),
         allowNull:false,
     },
+    department_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
     team_members:{
         type:DataTypes.ARRAY(DataTypes.BIGINT),
         allowNull:false

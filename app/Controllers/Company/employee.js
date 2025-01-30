@@ -1,5 +1,7 @@
+const { Op } = require("sequelize");
 const Helper = require("../../Helper/helper");
 const company = require("../../Models/company");
+const companyStructure = require("../../Models/companyStructure");
 const designation = require("../../Models/designation");
 const employee = require("../../Models/employee");
 const users = require("../../Models/users");
@@ -147,7 +149,8 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
         department_id: department_id,
         designation_id: designation_id,
         company_id: req.headers['x-id']
-      }
+      },
+
     })
     const employeeData = employeeDetails.map((item) => item.toJSON());
     const data = await Promise.all(
@@ -174,29 +177,33 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
     }
 
     // Fetch employees based on department_id and designation_id by Varun
-    const employeeDetails = await employee.findAll({
+    const levels = await designation.findOne({
       where: {
         department_id: department_id,
-        company_id: req.headers['x-id']
+        company_id: req.headers['x-id'],
+        id: designation_id
       },
     });
-    const data = [
-      {
-        label: "All",
-        value: 0,
-        employees: employeeDetails.map((item) => ({
-          label: item.name,
-          value: item.id,
-        })),
-      },
-    ];
 
-    if (employeeDetails.length > 0) {
-      data.push(...employeeDetails.map((item) => ({
-        label: item.name,
-        value: item.id,
-      })));
-    }
+    const upperLevels = await companyStructure.findAll({
+      where: {
+        level: {
+          [Op.gt]: levels.level
+        },
+        company_id: req.headers['x-id']
+      },
+      order: [["level", "ASC"]],
+    });
+
+    const data = []
+    upperLevels.map((t) => {
+      const values = {
+        value: t.id,
+        label: t.name
+      }
+      data.push(values)
+    })
+
     return Helper.response('success', 'Data found successfully', data, res, 200);
   } catch (err) {
     // Handle errors
