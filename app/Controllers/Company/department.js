@@ -72,7 +72,7 @@ exports.updateDepartment = async (req, res) => {
             status: req.body.status
         }
         if (!id || !updateData) {
-            return Helper.response("success", "Please provide all required fields", [], res, 200)
+            return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
         const [updatedRows] = await department.update(updateData, { where: { id: id } })
         if (updatedRows === 0) {

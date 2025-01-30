@@ -30,6 +30,6 @@ const board = sequelize.define('board', {
     status: {
         type: DataTypes.BOOLEAN,
         allowNull: false
-    }
+    },
 })
 module.exports = board

@@ -2,16 +2,17 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
 
 const company  = sequelize.define('company',{
+   
+    company_name:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
     fname:{
         type:DataTypes.STRING(20),
         allowNull:false
     },
     lname:{
         type:DataTypes.STRING(20),
-        allowNull:false
-    },
-    company_name:{
-        type:DataTypes.STRING,
         allowNull:false
     },
     email:{
