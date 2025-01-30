@@ -1,5 +1,6 @@
 const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
+const employee = require("../../Models/employee");
 
 exports.createDepartment = async (req, res, next) => {
     const { name } = req.body;
@@ -105,3 +106,31 @@ exports.deleteDepartment = async (req, res) => {
         return Helper.response("failed", err, [], res, 500)
     }
 }
+exports.getDepartmentNameById = async (req, res) => {
+    const { id } = req.body;
+    try {
+        const departmentName = await department.findAll({
+            where: { id:id, company_id: req.headers['x-id'] }
+        });
+
+        if (!departmentName || departmentName.length === 0) {
+            return Helper.response("failed", "No department found", [], res, 200);
+        }
+
+        const empData = await employee.findAll({
+            where:{
+                department_id:id,
+                company_id:req.headers['x-id']
+            }
+        })
+        
+        const departmentData = empData.map(dept => ({
+            value: dept.department_id, 
+            label: dept.name
+        }));
+
+        return Helper.response("success", "Department found", departmentData, res, 200);
+    } catch (error) {
+        return Helper.response("failed", error.message, [], res, 500);
+    }
+};
