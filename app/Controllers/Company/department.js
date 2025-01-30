@@ -2,6 +2,7 @@ const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
 const employee = require("../../Models/employee");
 
+
 exports.createDepartment = async (req, res, next) => {
     const { name } = req.body;
     try {
@@ -71,7 +72,7 @@ exports.updateDepartment = async (req, res) => {
             status: req.body.status
         }
         if (!id || !updateData) {
-            return Helper.response("success", "Please provide all required fields", [], res, 200)
+            return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
         const [updatedRows] = await department.update(updateData, { where: { id: id } })
         if (updatedRows === 0) {
@@ -106,12 +107,14 @@ exports.deleteDepartment = async (req, res) => {
         return Helper.response("failed", err, [], res, 500)
     }
 }
+
+
 exports.getDepartmentNameById = async (req, res) => {
-    const { id } = req.body;
+    const { department_id } = req.body;
     try {
         const departmentName = await department.findAll({
-            where: { id:id, company_id: req.headers['x-id'] }
-        });
+            where: { id:department_id, company_id: req.headers['x-id'] }
+
 
         if (!departmentName || departmentName.length === 0) {
             return Helper.response("failed", "No department found", [], res, 200);
@@ -119,13 +122,15 @@ exports.getDepartmentNameById = async (req, res) => {
 
         const empData = await employee.findAll({
             where:{
-                department_id:id,
+
+                department_id:department_id,
                 company_id:req.headers['x-id']
             }
         })
-        
+
         const departmentData = empData.map(dept => ({
-            value: dept.department_id, 
+            value: dept.user_id, 
+
             label: dept.name
         }));
 
@@ -133,4 +138,6 @@ exports.getDepartmentNameById = async (req, res) => {
     } catch (error) {
         return Helper.response("failed", error.message, [], res, 500);
     }
+
 };
+

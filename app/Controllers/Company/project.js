@@ -3,30 +3,41 @@ const department = require("../../Models/department");
 const project = require('../../Models/project')
 
 
+
 exports.createProject = async (req, res) => {
     const {
         project_title,
         project_description,
         start_date,
+
+        deadline,
         department_id,
-        end_date,
-        team_members,
-        team_lead,
+        team,
+        team_lead_id,
+
     } = req.body;
 
+
+
     try {
+        const dep = await department.findOne({
+            where: { id: department_id, company_id: req.headers['x-id'] }
+        })
+
+
+        const parsedTeamMembers = Array.isArray(team)
+            ? team.map((value) => BigInt(value))
+            : team
+                .split(',')
+                .map((value) => BigInt(value.trim()));
+
+        const parsedTeamLead = BigInt(team_lead_id); // Ensure team_lead is BigInt
 
         const dep = await department.findOne({
             where:{id:department_id,company_id:req.headers['x-id']}
         })
 
-        const parsedTeamMembers = Array.isArray(team_members)
-            ? team_members.map((value) => BigInt(value))
-            : team_members
-                .split(',')
-                .map((value) => BigInt(value.trim()));
-
-        const parsedTeamLead = BigInt(team_lead); // Ensure team_lead is BigInt
+  
 
         const proj = await project.create({
             company_id: req.headers['x-id'],
@@ -34,7 +45,7 @@ exports.createProject = async (req, res) => {
             project_description,
             department_id,
             start_date,
-            end_date,
+            end_date:deadline,
             team_members: parsedTeamMembers,
             team_lead: parsedTeamLead,
             created_by: req.headers['x-id'],
@@ -45,7 +56,9 @@ exports.createProject = async (req, res) => {
             // Convert BigInt values to Strings before sending response
             const responseData = {
                 ...proj.get({ plain: true }), // Convert Sequelize object to plain object
-                team_members: parsedTeamMembers.map((id) => id.toString()), 
+
+                team_members: parsedTeamMembers.map((id) => id.toString()),
+
                 team_lead: parsedTeamLead.toString()
             };
 
