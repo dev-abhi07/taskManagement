@@ -117,6 +117,8 @@ exports.companyLevels = async (req, res) => {
   } catch (error) {
     console.error(error);
     Helper.response("failed", "Server not responding.", {}, res, 200)
+  }
+}
 
 exports.createProject = async (req, res) => {
   const {
@@ -479,57 +481,63 @@ exports.deleteTask = async(req, res) =>{
   }
 }
 
-exports.updateTask = async(req, res) =>{
+exports.updateTask = async (req, res) => {
   const { id, ...updateData } = req.body;
 
   try {
     const company_id = req.headers['x-id'];
 
-    if (!id || !updateData) 
-    {
+    if (!id || !updateData) {
       return Helper.response("failed", "Please provide all required fields", [], res, 200);
     }
 
+    let assignIdData = [];
     if (updateData.assign_id) {
-      updateData.assign_id = Array.isArray(updateData.assign_id)
-        ? updateData.assign_id.map((value) => BigInt(value)) 
+      assignIdData = Array.isArray(updateData.assign_id)
+        ? updateData.assign_id.map((value) => BigInt(value))
         : updateData.assign_id
-            .split(',') 
-            .map((value) => BigInt(value.trim())); 
+            .split(',')
+            .map((value) => BigInt(value.trim()));
     }
 
-    const updatedData = {
-      created_by: req.headers['x-id'],
-      ...updateData,
-    };
-
-    const [updatedTask] = await task.update(updateData, 
-      { where: 
-        { 
-          id: id, 
-          company_id: company_id 
-        } 
-      });
-
-      if (updatedTask > 0) {
-        const responseData = {
-          ...updateData,
-          assign_id: updateData.assign_id
-            ? updateData.assign_id.map(String)
-            : undefined,
-        };
-
-    if (updatedTask) 
-    {
-      return Helper.response("success", "Task updated successfully", responseData, res, 200);
+    
+    const projectCount = await project.count();
+    if (projectCount === 0) {
+      return Helper.response("failed", "No projects found in the database", [], res, 200);
     }
 
-    return Helper.response("failed", "Failed to update task", [], res, 200);
-  } 
-}
-  catch (error) 
-  {
+    const invalidAssignees = [];
+    for (const member of assignIdData) {
+      const isLead = await project.findOne({ where: { team_lead: member } });
+
+      if (!isLead) {
+        invalidAssignees.push(member.toString());
+      }
+    }
+
+    if (invalidAssignees.length > 0) {
+      return Helper.response(
+        "failed",
+        `Assign ID(s) ${invalidAssignees.join(", ")} not found as team leads`,
+        [],
+        res,
+        200
+      );
+    }
+
+  
+    updateData.created_by = company_id;
+
+    const [updatedTask] = await task.update(updateData, {
+      where: { id: id, company_id: company_id },
+    });
+
+    if (updatedTask > 0) {
+      return Helper.response("success", "Task updated successfully", updateData, res, 200);
+    }
+
+    return Helper.response("failed", "No task found to update or no changes made", [], res, 200);
+  } catch (error) {
     return Helper.response("failed", error.message, [], res, 500);
-
   }
-}
+};
