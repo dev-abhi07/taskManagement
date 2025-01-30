@@ -16,6 +16,10 @@ const designation = sequelize.define('designation',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
+    level:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
     status:{
         type:DataTypes.BOOLEAN,
         allowNull:false,
