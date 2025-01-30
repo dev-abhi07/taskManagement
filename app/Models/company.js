@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
 
 const company  = sequelize.define('company',{
+   
     company_name:{
         type:DataTypes.STRING,
         allowNull:false
@@ -38,6 +39,7 @@ const company  = sequelize.define('company',{
         type:DataTypes.STRING,
         allowNull:false
     },
+
     created_by:{
         type:DataTypes.BIGINT,
         allowNull:false

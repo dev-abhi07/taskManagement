@@ -1,8 +1,8 @@
-
-
 const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
-        
+const employee = require("../../Models/employee");
+
+
 exports.createDepartment = async (req, res, next) => {
     const { name } = req.body;
     try {
@@ -10,7 +10,6 @@ exports.createDepartment = async (req, res, next) => {
         if (!name || !req.headers['x-id']) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
-        
         const isExists = await department.count({ where: { name: req.body.name,company_id:req.headers['x-id'] } });
         if (isExists > 0) {
             return Helper.response("failed", req.body.name + " already exists", [], res, 200)
@@ -34,10 +33,10 @@ exports.createDepartment = async (req, res, next) => {
 }
 
 exports.getDepartments = async (req, res) => {
-    const {id} = req.body;
+    const { id } = req.body;
     try {
         if (id) {
-            const departmentsById = await department.findOne({ where: { id: id,company_id:req.headers['x-id']    } })
+            const departmentsById = await department.findOne({ where: { id: id, company_id: req.headers['x-id'] } })
             if (!departmentsById) {
                 return Helper.response("failed", "No departments found", [], res, 200)
             }
@@ -70,7 +69,7 @@ exports.updateDepartment = async (req, res) => {
             name: req.body.name,
             company_id: req.headers['x-id'],
             created_by: req.headers['x-id'],
-            status:req.body.status
+            status: req.body.status
         }
         if (!id || !updateData) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200)
@@ -108,3 +107,32 @@ exports.deleteDepartment = async (req, res) => {
         return Helper.response("failed", err, [], res, 500)
     }
 }
+
+exports.getDepartmentNameById = async (req, res) => {
+    const { department_id } = req.body;
+    try {
+        const departmentName = await department.findAll({
+            where: { id:department_id, company_id: req.headers['x-id'] }
+        });
+
+        if (!departmentName || departmentName.length === 0) {
+            return Helper.response("failed", "No department found", [], res, 200);
+        }
+
+        const empData = await employee.findAll({
+            where:{
+                department_id:department_id,
+                company_id:req.headers['x-id']
+            }
+        })
+        
+        const departmentData = empData.map(dept => ({
+            value: dept.department_id, 
+            label: dept.name
+        }));
+
+        return Helper.response("success", "Department found", departmentData, res, 200);
+    } catch (error) {
+        return Helper.response("failed", error.message, [], res, 500);
+    }
+};

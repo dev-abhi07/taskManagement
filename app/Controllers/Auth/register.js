@@ -2,9 +2,9 @@ const users = require("../../Models/users");
 const company = require("../../Models/company");
 const Helper = require("../../Helper/helper");
 const { Op } = require("sequelize");
-const plan = require("../../Models/plan");
-const moment = require("moment");
-const payment = require("../../Models/payment");
+const moment = require("moment/moment");
+const plan = require('../../Models/plan')
+const payment = require('../../Models/payment')
 
 exports.companyRegister = async (req, res, next) => {
   try {
@@ -15,6 +15,7 @@ exports.companyRegister = async (req, res, next) => {
       subscription_plan_id,
       fname,
       lname,
+      address
     } = req.body;
 
     const today = moment();
@@ -97,7 +98,7 @@ exports.companyRegister = async (req, res, next) => {
       company_name: company_name,
       email: email,
       contact_number: mobile,
-      address: "street123",
+      address: address,
       subscription_plan_id: subscription_plan_id,
       subscription_start: subscription_start,
       subscription_end: subscription_end,
@@ -105,7 +106,6 @@ exports.companyRegister = async (req, res, next) => {
     });
 
     const userEntry = await users.create({
-      id:5,
       name: company_name,
       company_id: companyRecord.id,
       email: email,
@@ -141,5 +141,3 @@ exports.companyRegister = async (req, res, next) => {
     Helper.response("failed", err.message, [], res, 200);
   }
 };
-
-

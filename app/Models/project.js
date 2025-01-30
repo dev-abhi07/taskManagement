@@ -1,51 +1,47 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Connection/sequelize");
 
-const task = sequelize.define('task',{
+const project = sequelize.define('projects',{
     company_id:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    user_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    },
-    task_title:{
+    project_title:{
         type:DataTypes.STRING,
         allowNull:false
     },
-    task_description:{
+    project_description:{
         type:DataTypes.TEXT,
         allowNull:false
     },
-    project_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    },
-    assign_id:{
-        type:DataTypes.BIGINT,
-
-        type:DataTypes.ARRAY(DataTypes.BIGINT),
-
-        allowNull:false
-    },
-    priority:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    },
-    due_date:{
+    start_date:{
         type:DataTypes.STRING(25),
-        allowNull:false
+        allowNull:false,
     },
-    board_id:{
+    end_date:{
+        type:DataTypes.STRING(25),
+        allowNull:false,
+    },
+    department_id:{
         type:DataTypes.BIGINT,
         allowNull:false
+    },
+    team_members:{
+        type:DataTypes.ARRAY(DataTypes.BIGINT),
+        allowNull:false
+    },
+    team_lead:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
+    created_by:{
+        type:DataTypes.BIGINT,
+        allowNull:false        
     },
     status:{
         type:DataTypes.BOOLEAN,
         allowNull:false,
-        defaultValue:false
-    },
+        defaultValue:true
+    }
 })
-
-module.exports = task
+module.exports = project
