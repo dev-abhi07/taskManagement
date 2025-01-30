@@ -3,10 +3,12 @@ const { register, departmentDesignationBasedEmployee,getReportDepartmentAndDesig
 
 const { createDepartment, getDepartments, updateDepartment, deleteDepartment } = require('../Controllers/Company/department')
 const { createDesignation, updateDesignation, deleteDesignation, designationsList } = require('../Controllers/Company/designation')
+
 const { createCompanyStructure, getAllCompanyLevels, updateCompanyStructure, deleteCompanyStructure, companyLevels } = require('../Controllers/Company/company')
 const { createProject, getProject, deleteProject, updateProject } = require('../Controllers/Company/project')
 const { createPriority, getPriority, deletePriority, updatePriority } = require('../Controllers/Company/priority')
 const { createTask, getTask, deleteTask, updateTask } = require('../Controllers/Company/task')
+
 const router = express.Router()
 
 
@@ -33,6 +35,7 @@ router.post('/get-designation-by-department',departmentDesignationBasedEmployee)
 router.post('/get-report-to-by-department-and-designation-id',getReportDepartmentAndDesignation)
 
 
+
 //Company Structure
 router.post('/create-company-structure',createCompanyStructure)
 router.post("/company-structure-list", getAllCompanyLevels);
@@ -41,11 +44,13 @@ router.post("/delete-company-structure", deleteCompanyStructure);
 router.post("/get-company-level-dd",companyLevels)
 
 //
+
 //Project
 router.post('/create-project',createProject);
 router.get('/get-project',getProject);
 router.delete('/delete-project',deleteProject);
 router.post('/update-project',updateProject);
+
 
 //Priority
 router.post('/create-priority',createPriority);
@@ -60,4 +65,6 @@ router.get('/get-task',getTask);
 router.delete('/delete-task',deleteTask);
 router.post('/update-task',updateTask);
 
+
 module.exports = router
+
