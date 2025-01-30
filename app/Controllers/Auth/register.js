@@ -6,7 +6,6 @@ const moment = require("moment/moment");
 const plan = require('../../Models/plan')
 const payment = require('../../Models/payment')
 
-
 exports.companyRegister = async (req, res, next) => {
   try {
     const {
