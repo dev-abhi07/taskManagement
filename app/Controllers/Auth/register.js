@@ -15,7 +15,6 @@ exports.companyRegister = async (req, res, next) => {
       subscription_plan_id,
       fname,
       lname,
-      address
     } = req.body;
 
     const today = moment();
@@ -98,7 +97,7 @@ exports.companyRegister = async (req, res, next) => {
       company_name: company_name,
       email: email,
       contact_number: mobile,
-      address: address,
+      address: "street123",
       subscription_plan_id: subscription_plan_id,
       subscription_start: subscription_start,
       subscription_end: subscription_end,
