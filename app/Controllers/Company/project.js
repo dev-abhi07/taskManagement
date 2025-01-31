@@ -1,6 +1,9 @@
 const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
 const project = require('../../Models/project')
+const employee = require('../../Models/employee');
+const { Op } = require("sequelize");
+const users = require("../../Models/users");
 
 
 
@@ -36,7 +39,7 @@ exports.createProject = async (req, res) => {
             project_description,
             department_id,
             start_date,
-            end_date:deadline,
+            end_date: deadline,
             team_members: parsedTeamMembers,
             team_lead: parsedTeamLead,
             created_by: req.headers['x-id'],
@@ -68,10 +71,55 @@ exports.getProject = async (req, res) => {
                 company_id: req.headers['x-id'],
             }
         });
-        if (!projects) {
+
+        const data = []
+        await Promise.all(projects.map(async (t) => {
+
+            const departments = await department.findOne({
+                where: {
+                    id: t.department_id,
+                    status: true
+                }
+            })
+
+            const user = await users.findAll({
+                where: {
+                    id: { [Op.in]: t.team_members }
+                }
+            })
+
+            const teamLead = await users.findByPk(t.team_lead)
+            const empData = []
+            user.map((record) => {
+                const values = {
+                    value: record.id,
+                    label: record.name
+                }
+                empData.push(values)
+            })
+
+
+            const dataValues = {
+                title: t.project_title,
+                description: t.project_description,
+                team_lead: teamLead.name,
+                id: t.id,
+                deadline: await Helper.dateFormat(t.end_date),
+                department_id: departments.id,
+                start_date: await Helper.dateFormat(t.start_date),
+                department_name: departments.name,
+                team: empData,
+                team_lead_id: t.team_lead,
+                iso_start:t.start_date,
+                iso_end:t.end_date,
+                status: t.status == true ? "Active" : "InActive"
+            }
+            data.push(dataValues)
+        }))
+        if (!data) {
             return Helper.response("failed", "No projects found", [], res, 200);
         }
-        return Helper.response("success", "Projects found", projects, res, 200);
+        return Helper.response("success", "Projects found", data, res, 200);
     } catch (error) {
         console.log(error);
         return Helper.response("failed", error, [], res, 500);
@@ -79,7 +127,7 @@ exports.getProject = async (req, res) => {
 }
 
 exports.updateProject = async (req, res) => {
-    const { id, ...updateData } = req.body;
+    const { id, deadline,...updateData } = req.body;
 
     try {
         const company_id = req.headers['x-id'];
@@ -99,6 +147,7 @@ exports.updateProject = async (req, res) => {
 
         const updatedData = {
             created_by: req.headers['x-id'],
+            end_date:deadline,
             ...updateData,
         };
 

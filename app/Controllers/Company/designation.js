@@ -18,8 +18,7 @@ exports.createDesignation = async (req, res) => {
         }
         if (!name || !department_id || !req.headers['x-id']) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200);
-        }
-        const designations = await designation.create({
+        }        
         const designations = await designation.create({
             name: req.body.name.trim(),
             company_id: req.headers['x-id'],
@@ -40,40 +39,7 @@ exports.createDesignation = async (req, res) => {
     }
 };
 
-// exports.getDesignations = async (req, res) => {
-   
-//     const { id, department_id } = req.body;
-//     try {
-//         if (!department_id || !id) {
-//             return Helper.response("failed", "Please provide all required fields", [], res, 200)
-//         }
-//         if (id && department_id) {
-//             const designationsById = await designation.findOne({ where: { id: id } })
-//             const departments = await department.findOne({ where: { id: department_id } })
-//             if (!departments) {
-//                 return Helper.response("failed", "No departments found", [], res, 200)
-//             }
-//             const departmentName = departments ? departments.name : null;
-//             const data = {
-//                 departmentName: departmentName,
-//                 ...designationsById,
-//             };
-//             if (!designationsById) {
-//                 return Helper.response("failed", "No designations found", [], res, 200)
-//             }
-//             return Helper.response("success", "Designations found", data, res, 200)
-//         }
-//     } catch (error) {
-//         console.log(error)
-//         return Helper.response("failed", error, [], res, 500)
-//     }
-// }
 
-=======
-//         console.error("Error in createDesignation:", error); // Log the error for debugging
-//         return Helper.response("failed", error.message, [], res, 500);
-    }
-};
 exports.updateDesignation = async (req, res) => {
     try {
         const { id, ...updateData } = req.body;
@@ -131,7 +97,7 @@ exports.designationsList = async (req, res) => {
             );
         }
 
-      )
+     
         const data = []
         await Promise.all(designations.map(async(t) => {
             const departments = await department.findOne({

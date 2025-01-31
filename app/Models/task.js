@@ -33,7 +33,11 @@ const task = sequelize.define('task',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    due_date:{
+    start_date:{
+        type:DataTypes.STRING(25),
+        allowNull:false
+    },
+    end_date:{
         type:DataTypes.STRING(25),
         allowNull:false
     },
