@@ -4,15 +4,15 @@ const users = require("../../Models/users");
 const task = require("../../Models/task")
 
 exports.createTask = async (req, res) => {
-    const {
-        user_id,
-        task_title,
-        task_description,
+    const {       
+        title,
+        description,
         project_id,
-        assign_id,
+        user_ids,
         priority,
-        due_date,
-        board_id,
+        start_date,
+        end_date,
+        board,
     } = req.body;
 
     try {
@@ -66,14 +66,15 @@ exports.createTask = async (req, res) => {
 
         const taskData = await task.create({
             company_id: req.headers['x-id'],
-            user_id,
-            task_title,
-            task_description,
+            user_ids,
+            title,
+            description,
             project_id,
             assign_id: parsedAssignedMembers,
             priority,
-            due_date,
-            board_id: 1,
+            start_date,
+            end_date,
+            board,
             status: true,
         });
 

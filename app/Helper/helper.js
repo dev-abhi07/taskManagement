@@ -27,4 +27,19 @@ Helper.getUserId = async (req) => {
   const user = await users.findOne({ where: { token: string[1] } });
 }
 
+Helper.dateFormat = async (date) => {
+  const istDate = new Date(date).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true, // Use 12-hour format
+    timeZone: "Asia/Kolkata",
+  });
+
+  return istDate
+}
+
 module.exports = Helper;

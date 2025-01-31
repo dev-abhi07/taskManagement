@@ -115,7 +115,7 @@ exports.getDepartmentNameById = async (req, res) => {
         const departmentName = await department.findAll({
             where: { id:department_id, company_id: req.headers['x-id'] }})
 
-
+        })
         if (!departmentName || departmentName.length === 0) {
             return Helper.response("failed", "No department found", [], res, 200);
         }
