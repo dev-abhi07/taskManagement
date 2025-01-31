@@ -33,6 +33,7 @@ exports.createProject = async (req, res) => {
 
         const parsedTeamLead = BigInt(team_lead_id); // Ensure team_lead is BigInt
 
+
         const proj = await project.create({
             company_id: req.headers['x-id'],
             project_title,
