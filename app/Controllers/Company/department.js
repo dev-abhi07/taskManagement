@@ -108,12 +108,13 @@ exports.deleteDepartment = async (req, res) => {
     }
 }
 
+
 exports.getDepartmentNameById = async (req, res) => {
     const { department_id } = req.body;
     try {
         const departmentName = await department.findAll({
             where: { id:department_id, company_id: req.headers['x-id'] }
-        });
+
 
         if (!departmentName || departmentName.length === 0) {
             return Helper.response("failed", "No department found", [], res, 200);
@@ -121,6 +122,7 @@ exports.getDepartmentNameById = async (req, res) => {
 
         const empData = await employee.findAll({
             where:{
+
                 department_id:department_id,
                 company_id:req.headers['x-id']
             }
@@ -128,6 +130,7 @@ exports.getDepartmentNameById = async (req, res) => {
 
         const departmentData = empData.map(dept => ({
             value: dept.user_id, 
+
             label: dept.name
         }));
 
@@ -135,4 +138,6 @@ exports.getDepartmentNameById = async (req, res) => {
     } catch (error) {
         return Helper.response("failed", error.message, [], res, 500);
     }
+
 };
+

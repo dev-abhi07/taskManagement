@@ -12,10 +12,12 @@ exports.createProject = async (req, res) => {
         project_title,
         project_description,
         start_date,
+
         deadline,
         department_id,
         team,
         team_lead_id,
+
     } = req.body;
 
 
@@ -25,6 +27,7 @@ exports.createProject = async (req, res) => {
             where: { id: department_id, company_id: req.headers['x-id'] }
         })
 
+
         const parsedTeamMembers = Array.isArray(team)
             ? team.map((value) => BigInt(value))
             : team
@@ -32,6 +35,12 @@ exports.createProject = async (req, res) => {
                 .map((value) => BigInt(value.trim()));
 
         const parsedTeamLead = BigInt(team_lead_id); // Ensure team_lead is BigInt
+
+        const dep = await department.findOne({
+            where:{id:department_id,company_id:req.headers['x-id']}
+        })
+
+  
 
         const proj = await project.create({
             company_id: req.headers['x-id'],
@@ -50,7 +59,9 @@ exports.createProject = async (req, res) => {
             // Convert BigInt values to Strings before sending response
             const responseData = {
                 ...proj.get({ plain: true }), // Convert Sequelize object to plain object
+
                 team_members: parsedTeamMembers.map((id) => id.toString()),
+
                 team_lead: parsedTeamLead.toString()
             };
 
@@ -60,9 +71,10 @@ exports.createProject = async (req, res) => {
         }
     } catch (err) {
         console.error("Error creating project:", err);
-        Helper.response("failed", err, [], res, 500);
+        return Helper.response("failed", err.message, [], res, 500);
     }
 };
+
 
 exports.getProject = async (req, res) => {
     try {
