@@ -33,3 +33,4 @@ const payment = sequelize.define('payments',{
 })
 
 module.exports = payment;
+

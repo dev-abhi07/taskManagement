@@ -6,6 +6,6 @@ const router = express.Router();
 const { companyRegister } = require("../Controllers/Auth/register");
 
 router.post('/login',login)
-router.post('/demo-plan',companyRegister)
+router.post('/company-register',companyRegister)
 
 module.exports = router;

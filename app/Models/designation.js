@@ -31,5 +31,3 @@ const designation = sequelize.define('designation',{
     }
 })
 module.exports = designation
-
-

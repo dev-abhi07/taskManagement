@@ -2,13 +2,13 @@ const Helper = require("../../Helper/helper");
 const priority = require('../../Models/priority')
 
 exports.createPriority = async (req, res) => {
-    const { priority_name, color_code } = req.body;
+    const { priority_name, color_name } = req.body;
 
     try {
         const priorityData = await priority.create({
             company_id: req.headers['x-id'],
-            priority_name,
-            color_code: color_code,
+            priority_name:priority_name,
+            color_code: color_name,
             created_by: req.headers['x-id'],
             status: true,
         });
@@ -48,9 +48,9 @@ exports.deletePriority = async (req, res) => {
         if (!id) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200);
         }
-        const priorityDelete = await priority.destroy({ where: { id: id } });
+        const priorityDelete = await priority.destroy({ where: { id: id,company_id:1 } });
         if (priorityDelete) {
-            return Helper.response("success", "Priority deleted successfully", priorityDelete, res, 200);
+            return Helper.response("success", "Priority deleted successfully",[], res, 200);
         } else {
             return Helper.response("failed", "Failed to delete priority", [], res, 200);
         }
@@ -60,14 +60,22 @@ exports.deletePriority = async (req, res) => {
 }
 
 exports.updatePriority = async (req, res) => {
-    const { id, ...updateData } = req.body;
+    const {id} = req.body;
 
     try {
         const company_id = req.headers['x-id'];
-        updateData.created_by = req.headers['x-id'];
 
-        if (!id || !updateData) {
+        if (!id) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200);
+
+        }
+
+        const updateData ={
+            priority_name:req.body.priority_name,
+            color_code:req.body.color_name,
+            created_by:req.body.created_by,
+            status:req.body.status,
+            created_by:company_id
         }
 
         const updatedPriority = await priority.update(updateData,
@@ -80,12 +88,45 @@ exports.updatePriority = async (req, res) => {
             });
 
         if (updatedPriority) {
-            return Helper.response("success", "Priority updated successfully", updatedPriority, res, 200);
+            return Helper.response("success", "Priority updated successfully", [], res, 200);
         }
 
         return Helper.response("failed", "Failed to update priority", [], res, 200);
     }
     catch (error) {
-        return Helper.response("failed", error, [], res, 500);
+        return Helper.response("failed", error.message, [], res, 500);
     }
 }
+
+exports.prioritiesDropDown = async(req,res)=>{
+    try{
+        const priorities = await priority.findAll({
+            where: {
+              company_id: req.headers['x-id']
+            }
+          })
+          const priorityData = priorities.map((item) => item.toJSON());
+         
+          const data = await Promise.all(
+            priorityData.map(async (item) => {
+              return {
+                label: item?.priority_name,
+                value: item?.id,
+                created_at:item?.created_by,
+                color_name:item?.color_code,
+    
+              };
+            })
+          );
+          if(!priorities){
+            return Helper.response("failed", "No data found", [], res, 200);
+          }
+
+          return Helper.response('success','data found successfully',data,res,200)
+
+
+    }catch(err){
+        return Helper.response("failed", err.message, [], res, 500);
+    }
+}
+
