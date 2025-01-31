@@ -1,5 +1,7 @@
 const Helper = require("../../Helper/helper");
 const department = require("../../Models/department");
+const employee = require("../../Models/employee");
+
 
 exports.createDepartment = async (req, res, next) => {
     const { name } = req.body;
@@ -70,7 +72,7 @@ exports.updateDepartment = async (req, res) => {
             status: req.body.status
         }
         if (!id || !updateData) {
-            return Helper.response("success", "Please provide all required fields", [], res, 200)
+            return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
         const [updatedRows] = await department.update(updateData, { where: { id: id } })
         if (updatedRows === 0) {
@@ -105,3 +107,37 @@ exports.deleteDepartment = async (req, res) => {
         return Helper.response("failed", err, [], res, 500)
     }
 }
+
+
+exports.getDepartmentNameById = async (req, res) => {
+    const { department_id } = req.body;
+    try {
+        const departmentName = await department.findAll({
+            where: { id:department_id, company_id: req.headers['x-id'] }
+
+        })
+        if (!departmentName || departmentName.length === 0) {
+            return Helper.response("failed", "No department found", [], res, 200);
+        }
+
+        const empData = await employee.findAll({
+            where:{
+
+                department_id:department_id,
+                company_id:req.headers['x-id']
+            }
+        })
+
+        const departmentData = empData.map(dept => ({
+            value: dept.user_id, 
+
+            label: dept.name
+        }));
+
+        return Helper.response("success", "Department found", departmentData, res, 200);
+    } catch (error) {
+        return Helper.response("failed", error.message, [], res, 500);
+    }
+
+};
+

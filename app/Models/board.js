@@ -19,8 +19,9 @@ const board = sequelize.define('board', {
         allowNull: false
     },
     board_order: {
-        type: DataTypes.INTEGER,
+        type:DataTypes.ARRAY(DataTypes.TEXT),
         allowNull: false,
+        defaultValue: [],
     },
     created_by: {
         type: DataTypes.BIGINT,
@@ -29,6 +30,6 @@ const board = sequelize.define('board', {
     status: {
         type: DataTypes.BOOLEAN,
         allowNull: false
-    }
+    },
 })
 module.exports = board

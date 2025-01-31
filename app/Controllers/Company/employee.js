@@ -210,4 +210,3 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
     return Helper.response('failed', err.message || 'Internal Server Error', [], res, 500);
   }
 };
-

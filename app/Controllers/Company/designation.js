@@ -4,22 +4,25 @@ const department = require("../../Models/department");
 const designation = require("../../Models/designation");
 
 exports.createDesignation = async (req, res) => {
+
+   
+    
+   
     const { name, department_id,level_id } = req.body;
 
     try {
         const isExists = await designation.count({ where: { name: name, level:level_id,company_id: req.headers['x-id'] } });
+
         if (isExists > 0) {
             return Helper.response("failed", name + " already exists", [], res, 200);
         }
         if (!name || !department_id || !req.headers['x-id']) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200);
-        }
-
-
-
+        }        
         const designations = await designation.create({
             name: req.body.name.trim(),
             company_id: req.headers['x-id'],
+
             department_id: department_id,
             created_by: req.headers['x-id'],
             level:level_id
@@ -31,10 +34,12 @@ exports.createDesignation = async (req, res) => {
             return Helper.response("failed", "Failed to create designation", [], res, 200);
         }
     } catch (error) {
-        console.error("Error in createDesignation:", error); // Log the error for debugging
+        console.error("Error in createDesignation:", error); 
         return Helper.response("failed", error.message, [], res, 500);
     }
 };
+
+
 exports.updateDesignation = async (req, res) => {
     try {
         const { id, ...updateData } = req.body;
@@ -64,7 +69,7 @@ exports.deleteDesignation = async (req, res) => {
         if (!id) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
-        const designationDelete = await designation.destroy({ where: { id: id } })
+        const designationDelete = await designation.destroy({ where: { id: id,company_id:req.headers['x-id'] } })
         if (designationDelete) {
             return Helper.response("success", "Designation deleted successfully", designationDelete, res, 200)
         } else {
@@ -92,7 +97,7 @@ exports.designationsList = async (req, res) => {
             );
         }
 
-        //console.log(designations,255)
+     
         const data = []
         await Promise.all(designations.map(async(t) => {
             const departments = await department.findOne({

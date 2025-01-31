@@ -27,4 +27,4 @@ readdirSync('./app/Routes').map((route) =>
     app.use('/api', require('./app/Routes/' + route))
 )
 
-app.listen(port, () => console.log(`listening to port:${port} `))
+app.listen(port, () => console.log(`listening to port:${process.env.SERVER_PORT} `))
