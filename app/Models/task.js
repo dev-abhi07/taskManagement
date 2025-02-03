@@ -23,10 +23,7 @@ const task = sequelize.define('task',{
         allowNull:false
     },
     assign_id:{
-        type:DataTypes.BIGINT,
-
         type:DataTypes.ARRAY(DataTypes.BIGINT),
-
         allowNull:false
     },
     priority:{

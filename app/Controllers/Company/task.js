@@ -8,7 +8,8 @@ exports.createTask = async (req, res) => {
         title,
         description,
         project_id,
-        user_ids,
+        assign_id,
+        user_id,
         priority,
         start_date,
         end_date,
@@ -40,6 +41,7 @@ exports.createTask = async (req, res) => {
             ? assign_id.map((value) => BigInt(value))
             : assign_id.split(',').map((value) => BigInt(value.trim()));
 
+            console.log("??",assign_id)
 
         const invalidAssignees = [];
 
@@ -66,15 +68,15 @@ exports.createTask = async (req, res) => {
 
         const taskData = await task.create({
             company_id: req.headers['x-id'],
-            user_ids,
-            title,
-            description,
+            user_id,
+            task_title:title,
+            task_description:description,
             project_id,
             assign_id: parsedAssignedMembers,
             priority,
             start_date,
             end_date,
-            board,
+            board_id:board,
             status: true,
         });
 
@@ -88,7 +90,6 @@ exports.createTask = async (req, res) => {
         return Helper.response("failed", error.message, [], res, 500);
     }
 };
-
 exports.getTask = async (req, res) => {
     const { id } = req.body;
     try {
@@ -143,12 +144,39 @@ exports.updateTask = async (req, res) => {
             return Helper.response("failed", "Please provide all required fields", [], res, 200);
         }
 
+
         if (updateData.assign_id) {
-            updateData.assign_id = Array.isArray(updateData.assign_id)
+
+            const parsedAssignedMembers = Array.isArray(updateData.assign_id)
                 ? updateData.assign_id.map((value) => BigInt(value))
-                : updateData.assign_id
-                    .split(',')
-                    .map((value) => BigInt(value.trim()));
+                : updateData.assign_id.split(',').map((value) => BigInt(value.trim()));
+
+
+            const projectData = await project.findOne({ where: { id: updateData.project_id } });
+
+            if (!projectData) {
+                return Helper.response("failed", "Project not found", [], res, 200);
+            }
+
+
+            const invalidAssignees = [];
+
+            for (const member of parsedAssignedMembers) {
+                const isLead = await project.findOne({
+                    where: { team_lead: member, id: updateData.project_id }
+                });
+
+                if (!isLead) {
+                    invalidAssignees.push(member.toString());
+                }
+            }
+
+            if (invalidAssignees.length > 0) {
+                return Helper.response("failed", `Assign ID(s) ${invalidAssignees.join(', ')} not found as team leads`, [], res, 200);
+            }
+
+
+            updateData.assign_id = parsedAssignedMembers;
         }
 
         const updatedData = {
@@ -156,31 +184,27 @@ exports.updateTask = async (req, res) => {
             ...updateData,
         };
 
-        const [updatedTask] = await task.update(updateData,
-            {
-                where:
-                {
-                    id: id,
-                    company_id: company_id
-                }
-            });
+
+        const [updatedTask] = await task.update(updateData, {
+            where: {
+                id: id,
+                company_id: company_id
+            }
+        });
 
         if (updatedTask > 0) {
             const responseData = {
                 ...updateData,
-                assign_id: updateData.assign_id
-                    ? updateData.assign_id.map(String)
-                    : undefined,
+                assign_id: updateData.assign_id ? updateData.assign_id.map(String) : undefined,
             };
 
-            if (updatedTask) {
-                return Helper.response("success", "Task updated successfully", responseData, res, 200);
-            }
-
-            return Helper.response("failed", "Failed to update task", [], res, 200);
+            return Helper.response("success", "Task updated successfully", responseData, res, 200);
         }
-    }
-    catch (error) {
+
+        return Helper.response("failed", "Failed to update task", [], res, 200);
+
+    } catch (error) {
+        console.error("Error updating task:", error);
         return Helper.response("failed", error.message, [], res, 500);
     }
-}
+};
