@@ -120,14 +120,17 @@ exports.departmentDesignationBasedEmployee = async (req, res) => {
     const designations = await designation.findAll({
       where: {
         department_id: department_id,
+        company_id:req.headers['x-id']
       }
     })
+    
     const designationData = designations.map((item) => item.toJSON());
     const data = await Promise.all(
       designationData.map(async (item) => {
         return {
           label: item?.name,
           value: item?.id,
+          level:item.level
         };
       })
     );
@@ -137,40 +140,9 @@ exports.departmentDesignationBasedEmployee = async (req, res) => {
     return Helper.response('failed', err, [], res, 500);
   }
 }
-exports.getReportDepartmentAndDesignation = async (req, res) => {
-  const { department_id, designation_id } = req.body;
-  try {
-    if (!department_id || !designation_id) {
-      return Helper.response('failed', "Please provide department Id and designation Id", [], res, 200)
-    }
-
-    const employeeDetails = await employee.findAll({
-      where: {
-        department_id: department_id,
-        designation_id: designation_id,
-        company_id: req.headers['x-id']
-      },
-
-    })
-    const employeeData = employeeDetails.map((item) => item.toJSON());
-    const data = await Promise.all(
-      employeeData.map(async (item) => {
-        return {
-          ...item
-        }
-      }
-      ))
-    if (!employeeData) {
-      return Helper.response('failed', "No employee found", [], res, 200);
-    }
-    return Helper.response('success', 'data found successfully', data, res, 200)
-  } catch (err) {
-    return Helper.response('failed', err, [], res, 500)
-  }
-}
 
 exports.getReportDepartmentAndDesignation = async (req, res) => {
-  const { department_id, designation_id } = req.body;
+  const { department_id, designation_id,designation_level } = req.body;
   try {
     if (!department_id || !designation_id) {
       return Helper.response('failed', "Please provide department Id and designation Id", [], res, 200);
@@ -181,20 +153,21 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
       where: {
         department_id: department_id,
         company_id: req.headers['x-id'],
-        id: designation_id
+        level:designation_level     
       },
     });
 
     const upperLevels = await companyStructure.findAll({
       where: {
         level: {
-          [Op.gt]: levels.level
+          [Op.lt]: levels.level
         },
         company_id: req.headers['x-id']
       },
       order: [["level", "ASC"]],
     });
 
+    console.log(upperLevels,26366)
     const data = []
     upperLevels.map((t) => {
       const values = {

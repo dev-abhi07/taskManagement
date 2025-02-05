@@ -89,3 +89,34 @@ exports.updatePriority = async (req, res) => {
         return Helper.response("failed", error, [], res, 500);
     }
 }
+exports.prioritiesDropDown = async (req, res) => {
+    try {
+        const priorities = await priority.findAll({
+            where: {
+                company_id: req.headers['x-id']
+            }
+        })
+        const priorityData = priorities.map((item) => item.toJSON());
+
+        const data = await Promise.all(
+            priorityData.map(async (item) => {
+                return {
+                    label: item?.priority_name,
+                    value: item?.id,
+                    created_at: item?.created_by,
+                    color_name: item?.color_code,
+
+                };
+            })
+        );
+        if (!priorities) {
+            return Helper.response("failed", "No data found", [], res, 200);
+        }
+
+        return Helper.response('success', 'data found successfully', data, res, 200)
+
+
+    } catch (err) {
+        return Helper.response("failed", err.message, [], res, 500);
+    }
+}

@@ -2,12 +2,12 @@ const express = require('express')
 const router = express.Router();
 const { register, departmentDesignationBasedEmployee,getReportDepartmentAndDesignation } = require('../Controllers/Company/employee')
 
-const { createDepartment, getDepartments, updateDepartment, deleteDepartment, getDepartmentNameById } = require('../Controllers/Company/department')
+const { createDepartment, getDepartments, updateDepartment, deleteDepartment, getDepartmentNameById, departmentListDropDown } = require('../Controllers/Company/department')
 const { createDesignation, updateDesignation, deleteDesignation, designationsList } = require('../Controllers/Company/designation')
 
 const { createCompanyStructure, getAllCompanyLevels, updateCompanyStructure, deleteCompanyStructure, companyLevels } = require('../Controllers/Company/company')
-const { createProject, getProject, deleteProject, updateProject } = require('../Controllers/Company/project')
-const { createPriority, getPriority, deletePriority, updatePriority } = require('../Controllers/Company/priority')
+const { createProject, getProject, deleteProject, updateProject, projectListDropDown, getUserListProject } = require('../Controllers/Company/project')
+const { createPriority, getPriority, deletePriority, updatePriority, prioritiesDropDown } = require('../Controllers/Company/priority')
 const { createTask, getTask, deleteTask, updateTask } = require('../Controllers/Company/task')
 const { createBoard, boardList, updateBoard, deleteBoard } = require('../Controllers/Company/board')
 
@@ -20,6 +20,7 @@ router.post('/department-list',getDepartments)
 router.post('/update-department',updateDepartment)
 router.post('/delete-department',deleteDepartment)
 router.post('/get-team-by-department-dd',getDepartmentNameById)
+router.post('/get-department-dd',departmentListDropDown)
 
 
 //boards
@@ -61,6 +62,8 @@ router.post('/create-project',createProject);
 router.post('/project-list',getProject);
 router.post('/delete-project',deleteProject);
 router.post('/update-project',updateProject);
+router.post('/get-project-dd',projectListDropDown)
+router.post('/get-user-by-project-dd',getUserListProject)
 
 
 //Priority
@@ -68,6 +71,7 @@ router.post('/create-priority',createPriority);
 router.post('/get-priority',getPriority);
 router.post('/delete-priority',deletePriority);
 router.post('/update-priority',updatePriority);
+router.post('/get-priority-dd',prioritiesDropDown)
 
 
 //Task

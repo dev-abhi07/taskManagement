@@ -111,8 +111,8 @@ exports.getProject = async (req, res) => {
                 department_name: departments.name,
                 team: empData,
                 team_lead_id: t.team_lead,
-                iso_start:t.start_date,
-                iso_end:t.end_date,
+                iso_start: t.start_date,
+                iso_end: t.end_date,
                 status: t.status == true ? "Active" : "InActive"
             }
             data.push(dataValues)
@@ -127,8 +127,74 @@ exports.getProject = async (req, res) => {
     }
 }
 
+exports.projectListDropDown = async (req, res) => {
+    try {
+        const projects = await project.findAll({
+            where: {
+                company_id: req.headers['x-id']
+            }
+        });
+
+        const projectData = projects.map((item) => item.toJSON());
+
+        const data = await Promise.all(
+            projectData.map(async (item) => {
+                return {
+                    label: item?.project_title,
+                    value: item?.id,
+
+
+                };
+            })
+        );
+        if (!projectData) {
+            return Helper.response("failed", "No data found", [], res, 200);
+        }
+
+        return Helper.response('success', 'data found successfully', data, res, 200)
+
+    } catch (err) {
+        return Helper.response("failed", err.message, [], res, 500);
+    }
+}
+
+exports.getUserListProject = async (req, res) => {
+    const { project_id } = req.body;
+
+    try {
+        const projects = await project.findOne({
+            where: {
+                id: project_id,
+                company_id: req.headers['x-id']
+            }
+        });
+
+        if (!project) {
+            return Helper.response("failed", "Project not found", [], res, 404);
+        }
+
+
+        const userData = await users.findAll({
+            where: { id: { [Op.in]:projects.team_members } },
+        });
+
+        const data = []
+        userData.map((t) => {
+            const values = {
+                value:t.id,
+                label:t.name
+            }
+            data.push(values)
+        })
+        return Helper.response('success', 'Data retrieved successfully', data, res, 200);
+
+    } catch (err) {
+        return Helper.response("failed", err.message, [], res, 500);
+    }
+};
+
 exports.updateProject = async (req, res) => {
-    const { id, deadline,...updateData } = req.body;
+    const { id, deadline, ...updateData } = req.body;
 
     try {
         const company_id = req.headers['x-id'];
@@ -148,7 +214,7 @@ exports.updateProject = async (req, res) => {
 
         const updatedData = {
             created_by: req.headers['x-id'],
-            end_date:deadline,
+            end_date: deadline,
             ...updateData,
         };
 
