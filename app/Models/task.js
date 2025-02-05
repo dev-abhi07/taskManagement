@@ -23,10 +23,7 @@ const task = sequelize.define('task',{
         allowNull:false
     },
     assign_id:{
-        type:DataTypes.BIGINT,
-
         type:DataTypes.ARRAY(DataTypes.BIGINT),
-
         allowNull:false
     },
     priority:{
@@ -44,6 +41,11 @@ const task = sequelize.define('task',{
     board_id:{
         type:DataTypes.BIGINT,
         allowNull:false
+    },
+    task_order:{
+        type:DataTypes.ARRAY(DataTypes.TEXT),
+        allowNull: false,
+        defaultValue: [],
     },
     status:{
         type:DataTypes.BOOLEAN,

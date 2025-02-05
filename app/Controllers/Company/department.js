@@ -141,3 +141,31 @@ exports.getDepartmentNameById = async (req, res) => {
 
 };
 
+exports.departmentListDropDown = async(req,res)=>{
+    try{
+        const departments = await department.findAll({
+            where:{
+                company_id:req.headers['x-id']
+            }
+        })
+        const departmentData = departments.map((item)=>item.toJSON())
+
+        const data = await Promise.all(
+            departmentData.map(async(item)=>{
+              return {
+                label:item.name,
+                value:item.id
+              }
+            })
+        )
+        if(!departments){
+            return Helper.response('failed','data not found',[],res,200)
+        }
+
+        return Helper.response('success','data found successfully',data,res,200)
+
+    }catch(err){
+        return Helper.response("failed", err.message, [], res, 500);
+    }
+}
+

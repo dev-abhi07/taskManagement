@@ -12,7 +12,7 @@ const sequelize = new Sequelize({
     dialectOptions: {
       useUTC: false, 
     },
-    logging: false, 
+    logging: console.log, 
 })  
 sequelize.authenticate().then(() => {
   console.log('connected');
