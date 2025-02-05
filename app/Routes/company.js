@@ -1,4 +1,5 @@
 const express = require('express')
+const router = express.Router();
 const { register, departmentDesignationBasedEmployee,getReportDepartmentAndDesignation } = require('../Controllers/Company/employee')
 
 const { createDepartment, getDepartments, updateDepartment, deleteDepartment, getDepartmentNameById } = require('../Controllers/Company/department')
