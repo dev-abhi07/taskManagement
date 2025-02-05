@@ -1,7 +1,7 @@
 const express = require('express')
 const { register, departmentDesignationBasedEmployee,getReportDepartmentAndDesignation } = require('../Controllers/Company/employee')
 
-const { createDepartment, getDepartments, updateDepartment, deleteDepartment, getDepartmentNameById } = require('../Controllers/Company/department')
+const { createDepartment, getDepartments, updateDepartment, deleteDepartment, getDepartmentNameById, departmentListDropDown } = require('../Controllers/Company/department')
 const { createDesignation, updateDesignation, deleteDesignation, designationsList } = require('../Controllers/Company/designation')
 
 const { createCompanyStructure, getAllCompanyLevels, updateCompanyStructure, deleteCompanyStructure, companyLevels } = require('../Controllers/Company/company')
@@ -19,6 +19,7 @@ router.post('/department-list',getDepartments)
 router.post('/update-department',updateDepartment)
 router.post('/delete-department',deleteDepartment)
 router.post('/get-team-by-department-dd',getDepartmentNameById)
+router.post('/get-department-dd',departmentListDropDown)
 
 
 //boards

@@ -42,6 +42,11 @@ const task = sequelize.define('task',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
+    task_order:{
+        type:DataTypes.ARRAY(DataTypes.TEXT),
+        allowNull: false,
+        defaultValue: [],
+    },
     status:{
         type:DataTypes.BOOLEAN,
         allowNull:false,

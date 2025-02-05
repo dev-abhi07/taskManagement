@@ -109,7 +109,8 @@ exports.companyLevels = async (req, res) => {
     levels.map((t) => {
       const values = {
         value: t.id,
-        label: t.name
+        label: t.name,
+        level:t.level
       }
       data.push(values)
     })

@@ -40,9 +40,7 @@ exports.createTask = async (req, res) => {
         const parsedAssignedMembers = Array.isArray(assign_id)
             ? assign_id.map((value) => BigInt(value))
             : assign_id.split(',').map((value) => BigInt(value.trim()));
-
-            console.log("??",assign_id)
-
+           
         const invalidAssignees = [];
 
         for (const member of parsedAssignedMembers) {
