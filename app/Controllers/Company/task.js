@@ -143,7 +143,9 @@ exports.updateTask = async (req, res) => {
         }
 
 
+
         if (updateData.assign_id) {
+
 
             const parsedAssignedMembers = Array.isArray(updateData.assign_id)
                 ? updateData.assign_id.map((value) => BigInt(value))
@@ -172,7 +174,6 @@ exports.updateTask = async (req, res) => {
             if (invalidAssignees.length > 0) {
                 return Helper.response("failed", `Assign ID(s) ${invalidAssignees.join(', ')} not found as team leads`, [], res, 200);
             }
-
 
             updateData.assign_id = parsedAssignedMembers;
         }
@@ -205,4 +206,6 @@ exports.updateTask = async (req, res) => {
         console.error("Error updating task:", error);
         return Helper.response("failed", error.message, [], res, 500);
     }
+
 };
+

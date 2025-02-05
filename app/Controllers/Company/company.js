@@ -118,7 +118,6 @@ exports.companyLevels = async (req, res) => {
   } catch (error) {
     console.error(error);
     Helper.response("failed", "Server not responding.", {}, res, 200)
-  }
 
   exports.createProject = async (req, res) => {
     const {
@@ -470,38 +469,38 @@ exports.companyLevels = async (req, res) => {
       return Helper.response("failed", error, [], res, 500);
     }
   }
-
-  exports.updateTask = async (req, res) => {
-    const { id, ...updateData } = req.body;
+  }
+exports.updateTask = async(req, res) =>{
+  const { id, ...updateData } = req.body;
 
     try {
       const company_id = req.headers['x-id'];
 
-      if (!id || !updateData) {
-        return Helper.response("failed", "Please provide all required fields", [], res, 200);
-      }
+    if (!id || !updateData) 
+    {
+      return Helper.response("failed", "Please provide all required fields", [], res, 200);
+    }
 
-      if (updateData.assign_id) {
-        updateData.assign_id = Array.isArray(updateData.assign_id)
-          ? updateData.assign_id.map((value) => BigInt(value))
-          : updateData.assign_id
-            .split(',')
-            .map((value) => BigInt(value.trim()));
-      }
+    if (updateData.assign_id) {
+      updateData.assign_id = Array.isArray(updateData.assign_id)
+        ? updateData.assign_id.map((value) => BigInt(value)) 
+        : updateData.assign_id
+            .split(',') 
+            .map((value) => BigInt(value.trim())); 
+    }
 
-      const updatedData = {
-        created_by: req.headers['x-id'],
-        ...updateData,
-      };
+    const updatedData = {
+      created_by: req.headers['x-id'],
+      ...updateData,
+    };
 
-      const [updatedTask] = await task.update(updateData,
-        {
-          where:
-          {
-            id: id,
-            company_id: company_id
-          }
-        });
+    const [updatedTask] = await task.update(updateData, 
+      { where: 
+        { 
+          id: id, 
+          company_id: company_id 
+        } 
+      });
 
       if (updatedTask > 0) {
         const responseData = {
@@ -511,16 +510,18 @@ exports.companyLevels = async (req, res) => {
             : undefined,
         };
 
-        if (updatedTask) {
-          return Helper.response("success", "Task updated successfully", responseData, res, 200);
-        }
-
-        return Helper.response("failed", "Failed to update task", [], res, 200);
-      }
+    if (updatedTask) 
+    {
+      return Helper.response("success", "Task updated successfully", responseData, res, 200);
     }
-    catch (error) {
-      return Helper.response("failed", error.message, [], res, 500);
 
+    return Helper.response("failed", "Failed to update task", [], res, 200);
+  } 
     }
+  catch (error) 
+  {
+    return Helper.response("failed", error.message, [], res, 500);
+
   }
+};
 }

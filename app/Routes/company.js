@@ -10,7 +10,7 @@ const { createPriority, getPriority, deletePriority, updatePriority, prioritiesD
 const { createTask, getTask, deleteTask, updateTask } = require('../Controllers/Company/task')
 const { createBoard, boardList, updateBoard, deleteBoard } = require('../Controllers/Company/board')
 
-const router = express.Router()
+
 
 
 //Department
