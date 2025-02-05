@@ -23,17 +23,18 @@ const task = sequelize.define('task',{
         allowNull:false
     },
     assign_id:{
-        type:DataTypes.BIGINT,
-
         type:DataTypes.ARRAY(DataTypes.BIGINT),
-
         allowNull:false
     },
     priority:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    due_date:{
+    start_date:{
+        type:DataTypes.STRING(25),
+        allowNull:false
+    },
+    end_date:{
         type:DataTypes.STRING(25),
         allowNull:false
     },
@@ -45,6 +46,11 @@ const task = sequelize.define('task',{
         type:DataTypes.BOOLEAN,
         allowNull:false,
         defaultValue:false
+    },
+    task_order: {
+        type:DataTypes.ARRAY(DataTypes.TEXT),
+        allowNull: false,
+        defaultValue: [],
     },
 })
 

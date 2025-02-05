@@ -5,6 +5,9 @@ const companyStructure = require("../../Models/companyStructure");
 const designation = require("../../Models/designation");
 const employee = require("../../Models/employee");
 const users = require("../../Models/users");
+const department = require("../../Models/department");
+const task = require("../../Models/task");
+
 
 
 // exports.register = async (req, res) => {
@@ -137,37 +140,7 @@ exports.departmentDesignationBasedEmployee = async (req, res) => {
     return Helper.response('failed', err, [], res, 500);
   }
 }
-exports.getReportDepartmentAndDesignation = async (req, res) => {
-  const { department_id, designation_id } = req.body;
-  try {
-    if (!department_id || !designation_id) {
-      return Helper.response('failed', "Please provide department Id and designation Id", [], res, 200)
-    }
 
-    const employeeDetails = await employee.findAll({
-      where: {
-        department_id: department_id,
-        designation_id: designation_id,
-        company_id: req.headers['x-id']
-      },
-
-    })
-    const employeeData = employeeDetails.map((item) => item.toJSON());
-    const data = await Promise.all(
-      employeeData.map(async (item) => {
-        return {
-          ...item
-        }
-      }
-      ))
-    if (!employeeData) {
-      return Helper.response('failed', "No employee found", [], res, 200);
-    }
-    return Helper.response('success', 'data found successfully', data, res, 200)
-  } catch (err) {
-    return Helper.response('failed', err, [], res, 500)
-  }
-}
 
 exports.getReportDepartmentAndDesignation = async (req, res) => {
   const { department_id, designation_id } = req.body;
@@ -188,7 +161,7 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
     const upperLevels = await companyStructure.findAll({
       where: {
         level: {
-          [Op.gt]: levels.level
+          [Op.lt]: levels.level
         },
         company_id: req.headers['x-id']
       },
@@ -210,3 +183,108 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
     return Helper.response('failed', err.message || 'Internal Server Error', [], res, 500);
   }
 };
+
+exports.employeeList = async (req, res) => {
+  try {
+      const companyId = req.headers['x-id'];
+
+      const employeeLists = await employee.findAll({
+          where: { company_id: companyId }
+      });
+
+      if (!employeeLists || employeeLists.length === 0) {
+          return Helper.response('failed', "No employee found", [], res, 200);
+      }
+
+      const employeeData = employeeLists.map(item => item.toJSON());
+
+      const data = await Promise.all(employeeData.map(async (item) => {
+          const departments = await department.findOne({
+              where: { id: item.department_id },
+              attributes: ['name','id']
+          });
+
+          const designations = await designation.findOne({
+              where: { id: item.designation_id },
+              attributes: ['name','id','level']
+          });
+
+          let reports = null; 
+
+          const levelId = parseInt(designations?.level, 10);
+          if (!isNaN(levelId)) {
+              reports = await companyStructure.findOne({
+                  where: { id: levelId },
+                  attributes: ['id', 'name']
+              });
+          
+          } else {
+              console.log('Error: Invalid level ID:', designations?.level);
+          }
+          
+          const user = await users.findOne({
+              where: { id: item.user_id },
+              attributes: ['mobile','role']
+          });
+
+          const companies = await company.findOne({
+              where: { id: item.company_id },
+              attributes: ['address']
+          });
+
+
+
+
+
+          const [first_name, ...last_nameArr] = item.name.split(' ');
+          const last_name = last_nameArr.join(' ');
+
+          const last_login = new Date().toLocaleString('en-IN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true
+        });
+
+          return {
+               first_name: first_name,
+               last_name: last_name,
+              employee_id:item?.user_id,
+              displayName: item?.name,
+              phone: user?.mobile,
+              address: companies?.address,
+              designation_name: designations?.name,
+              department_name: departments?.name,
+              email: item.email,
+              role:user?.role,
+              department_id:departments?.id,
+              designation_id:designations?.id,
+              last_login:last_login,
+              reporting_to:reports?.name
+             
+          };
+      }));
+
+      return Helper.response('success', 'Data found successfully', data, res, 200);
+
+  } catch (err) {
+      return Helper.response('failed', err.message || 'Internal Server Error', [], res, 500);
+  }
+};
+
+
+exports.employeeDashboard=async(req,res)=>{
+    try{
+       
+      console.log('varun')
+      
+      
+
+    }catch(err){
+      console.log(err.message)
+
+    }
+} 

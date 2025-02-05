@@ -6,9 +6,6 @@ const users = require("../../Models/users");
 
 
 
-
-
-
 exports.login = async (req, res) => {
   try {
     const data = req.body;
@@ -25,14 +22,12 @@ exports.login = async (req, res) => {
         [Op.or]: [{ username: req.body.login_id }, { email: req.body.login_id }],
       },
     });
-    // console.log('user',user.password)
-    // console.log('data',data.password)
-
+       
     if (!user) {
       return Helper.response("failed", "User not exists!", {}, res, 200);
     }
     if (data.password === Helper.decryptPassword(user.password)) {
-      let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
+      let token = jwt.sign({ id: user.id,role:user.role }, process.env.SECRET_KEY, {
         expiresIn: "2h",
       });
 

@@ -7,7 +7,7 @@ const express = require('express')
 const { registerHierarchy } = require('../Controllers/Company/company')
 const { createBoard, boardList, updateBoard,deleteBoard } = require('../Controllers/Company/board')
 
-const { register, departmentDesignationBasedEmployee,getReportDepartmentAndDesignation } = require('../Controllers/Company/employee')
+const { register, departmentDesignationBasedEmployee,getReportDepartmentAndDesignation, employeeList, employeeDashboard } = require('../Controllers/Company/employee')
 
 const { createDepartment, getDepartments, updateDepartment, deleteDepartment, getDepartmentNameById } = require('../Controllers/Company/department')
 const { createDesignation, updateDesignation, deleteDesignation, designationsList } = require('../Controllers/Company/designation')
@@ -16,6 +16,7 @@ const { createCompanyStructure, getAllCompanyLevels, updateCompanyStructure, del
 const { createProject, getProject, deleteProject, updateProject, projectListDropDown, getUserListProject } = require('../Controllers/Company/project')
 const { createPriority, getPriority, deletePriority, updatePriority, prioritiesDropDown } = require('../Controllers/Company/priority')
 const { createTask, getTask, deleteTask, updateTask } = require('../Controllers/Company/task')
+const { authenticate, Employee } = require('../middleware/auth')
 
 const router = express.Router()
 
@@ -50,6 +51,8 @@ router.post('/delete-board',deleteBoard)
 //Employee
 router.post('/get-designation-by-department',departmentDesignationBasedEmployee)
 router.post('/get-report-to-by-department-and-designation-id',getReportDepartmentAndDesignation)
+router.post('/employee-list',employeeList)
+router.post('/employee-dashboard',authenticate,Employee,employeeDashboard)
 
 
 

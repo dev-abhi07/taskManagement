@@ -1,6 +1,7 @@
 const Helper = {};
 const CryptoJS = require("crypto-js");
 const users = require("../Models/users");
+const jwt = require("jsonwebtoken");
 Helper.response = (status, message, data = [], res, statusCode) => {
   res.status(statusCode).json({
     status: status,
@@ -26,5 +27,33 @@ Helper.getUserId = async (req) => {
   const string = token.split(" ");
   const user = await users.findOne({ where: { token: string[1] } });
 }
+
+Helper.dateFormat = async (date) => {
+  const istDate = new Date(date).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true, // Use 12-hour format
+    timeZone: "Asia/Kolkata",
+  });
+
+  return istDate
+}
+
+Helper.verifyToken = async(token)=>{
+  try {
+    return jwt.verify(token,process.env.SECRET_KEY);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+
+}
+
+
+
+
 
 module.exports = Helper;
