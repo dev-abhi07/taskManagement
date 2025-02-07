@@ -5,6 +5,7 @@ const employee = require("../../Models/employee");
 
 exports.createDepartment = async (req, res, next) => {
     const { name } = req.body;
+    const companyId = req.user.company_id
     try {
 
         if (!name || !req.headers['x-id']) {
@@ -16,7 +17,7 @@ exports.createDepartment = async (req, res, next) => {
         }
         const departments = await department.create({
             name: name.trim(),
-            company_id: req.headers['x-id'],
+            company_id:companyId,
             created_by: req.headers['x-id'],
             status: true
         });
@@ -34,9 +35,10 @@ exports.createDepartment = async (req, res, next) => {
 
 exports.getDepartments = async (req, res) => {
     const { id } = req.body;
+    const companyId = req.user.company_id
     try {
         if (id) {
-            const departmentsById = await department.findOne({ where: { id: id, company_id: req.headers['x-id'] } })
+            const departmentsById = await department.findOne({ where: { id: id, company_id:companyId } })
             if (!departmentsById) {
                 return Helper.response("failed", "No departments found", [], res, 200)
             }
@@ -44,7 +46,7 @@ exports.getDepartments = async (req, res) => {
         }
         const departments = await department.findAll({
             where: {
-                company_id: req.headers['x-id'],
+                company_id:companyId,
             }
         })
         if (!departments) {
@@ -59,6 +61,7 @@ exports.getDepartments = async (req, res) => {
 }
 
 exports.updateDepartment = async (req, res) => {
+    const companyId = req.user.company_id
     try {
         const { id } = req.body;
         const isExists = await department.count({ where: { name: req.body.name } });
@@ -67,7 +70,7 @@ exports.updateDepartment = async (req, res) => {
         }
         const updateData = {
             name: req.body.name,
-            company_id: req.headers['x-id'],
+            company_id:companyId,
             created_by: req.headers['x-id'],
             status: req.body.status
         }
@@ -110,9 +113,10 @@ exports.deleteDepartment = async (req, res) => {
 
 exports.getDepartmentNameById = async (req, res) => {
     const { department_id } = req.body;
+    const companyId = req.user.company_id
     try {
         const departmentName = await department.findAll({
-            where: { id:department_id, company_id: req.headers['x-id'] }
+            where: { id:department_id, company_id:companyId }
         });
 
         if (!departmentName || departmentName.length === 0) {
@@ -121,18 +125,50 @@ exports.getDepartmentNameById = async (req, res) => {
 
         const empData = await employee.findAll({
             where:{
+
                 department_id:department_id,
-                company_id:req.headers['x-id']
+                company_id:companyId
             }
         })
-        
+
         const departmentData = empData.map(dept => ({
-            value: dept.department_id, 
+            value: dept.user_id, 
             label: dept.name
         }));
+        
+        
 
         return Helper.response("success", "Department found", departmentData, res, 200);
     } catch (error) {
         return Helper.response("failed", error.message, [], res, 500);
     }
 };
+
+exports.departmentListDropDown = async(req,res)=>{
+    const companyId = req.user.company_id
+    try{
+        const departments = await department.findAll({
+            where:{
+                company_id:companyId
+            }
+        })
+        const departmentData = departments.map((item)=>item.toJSON())
+
+        const data = await Promise.all(
+            departmentData.map(async(item)=>{
+              return {
+                label:item.name,
+                value:item.id
+              }
+            })
+        )
+        if(!departments){
+            return Helper.response('failed','data not found',[],res,200)
+        }
+
+        return Helper.response('success','data found successfully',data,res,200)
+
+    }catch(err){
+        return Helper.response("failed", err.message, [], res, 500);
+    }
+}

@@ -5,13 +5,14 @@ const designation = require("../../Models/designation");
 
 exports.createDesignation = async (req, res) => {
 
+    const companyId = req.user.company_id
    
     
    
     const { name, department_id,level_id } = req.body;
 
     try {
-        const isExists = await designation.count({ where: { name: name, level:level_id,company_id: req.headers['x-id'] } });
+        const isExists = await designation.count({ where: { name: name, level:level_id,company_id:companyId } });
 
         if (isExists > 0) {
             return Helper.response("failed", name + " already exists", [], res, 200);
@@ -21,7 +22,7 @@ exports.createDesignation = async (req, res) => {
         }
         const designations = await designation.create({
             name: req.body.name.trim(),
-            company_id: req.headers['x-id'],
+            company_id:companyId,
 
             department_id: department_id,
             created_by: req.headers['x-id'],
@@ -44,14 +45,14 @@ exports.updateDesignation = async (req, res) => {
     try {
         const { id, ...updateData } = req.body;
         const createdBy = req.headers['x-id'];
-        const company_id = req.headers['x-id'];
+        const companyId = req.user.company_id
 
         updateData.created_by = createdBy;
 
         if (!id || !updateData) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200);
         }
-        const updatedDesignation = await designation.update(updateData, { where: { id: id, company_id: company_id } });
+        const updatedDesignation = await designation.update(updateData, { where: { id: id, company_id:companyId } });
         if (updatedDesignation) {
             return Helper.response("success", "Designation updated successfully", updatedDesignation, res, 200);
         }
@@ -65,11 +66,12 @@ exports.updateDesignation = async (req, res) => {
 
 exports.deleteDesignation = async (req, res) => {
     const { id } = req.body;
+    const companyId = req.user.company_id
     try {
         if (!id) {
             return Helper.response("failed", "Please provide all required fields", [], res, 200)
         }
-        const designationDelete = await designation.destroy({ where: { id: id,company_id:req.headers['x-id'] } })
+        const designationDelete = await designation.destroy({ where: { id: id,company_id:companyId } })
         if (designationDelete) {
             return Helper.response("success", "Designation deleted successfully", designationDelete, res, 200)
         } else {
@@ -82,9 +84,10 @@ exports.deleteDesignation = async (req, res) => {
 
 
 exports.designationsList = async (req, res) => {
+    const companyId = req.user.company_id
     try {
         const designations = await designation.findAll({
-            where: { company_id: req.headers['x-id'] },
+            where: { company_id:companyId },
         });
 
         if (!designations) {
@@ -104,7 +107,7 @@ exports.designationsList = async (req, res) => {
             const level = await companyStructure.findOne({
                 where:{
                     id:t.level,
-                    company_id: req.headers['x-id']
+                    company_id:companyId
                 }
             })           
             const values = {

@@ -1,5 +1,6 @@
 const Helper = require("../../Helper/helper");
 const board = require("../../Models/board");
+const company = require("../../Models/company");
 const department = require("../../Models/department");
 const priority = require("../../Models/priority");
 const project = require("../../Models/project");
@@ -9,12 +10,16 @@ const { Op } = require("sequelize");
 exports.createBoard = async (req, res) => {
   const { title, color } = req.body;
 
+  
+  
+  
+
   try {
     const boards = await board.create({
       board_name: title,
       board_color: color.value,
       board_order: [`column-${title}`],
-      company_id: req.headers["x-id"],
+      company_id: req.user.company_id,
       created_by: req.headers["x-id"],
       status: true,
       user_id: req.headers["x-id"],
@@ -76,48 +81,111 @@ exports.deleteboard = async (req, res) => {
   }
 };
 
+// exports.updateBoard = async (req, res) => {
+//   const { id } = req.body;
+//   try {
+//     const updateData = {
+//       board_name: req.body.title,
+//       board_color: req.body.color.value,
+//       company_id: req.headers["x-id"],
+//       created_by: req.headers["x-id"],
+//       status: true,
+//       user_id: req.headers["x-id"],
+//       board_order: [`column-${req.body.title}`],
+//     };
+//     if (!id || !updateData) {
+//       return Helper.response(
+//         "failed",
+//         "Please provide all required fields",
+//         [],
+//         res,
+//         200
+//       );
+//     }
+
+//     const [updatedRows] = await board.update(updateData, { where: { id: id } });
+//     if (updatedRows === 0) {
+//       return Helper.response(
+//         "failed",
+//         "Failed to update department",
+//         [],
+//         res,
+//         200
+//       );
+//     }
+//     return Helper.response(
+//       "success",
+//       "board updated successfully",
+//       [],
+//       res,
+//       200
+//     );
+//   } catch (err) {
+//     console.log(err);
+//     return Helper.response("failed", err.message, {}, res, 200);
+//   }
+// };
+
+//update board
 exports.updateBoard = async (req, res) => {
   const { id } = req.body;
+  const companyId = req.headers["x-id"];
+
   try {
-    const updateData = {
-      board_name: req.body.title,
-      board_color: req.body.color.value,
-      company_id: req.headers["x-id"],
-      created_by: req.headers["x-id"],
-      status: true,
-      user_id: req.headers["x-id"],
-      board_order: [`column-${req.body.title}`],
-    };
-    if (!id || !updateData) {
-      return Helper.response(
-        "failed",
-        "Please provide all required fields",
-        [],
-        res,
-        200
-      );
+    // Fetch the existing board details
+    const existingBoard = await board.findOne({ where: { id } });
+
+    if (!existingBoard) {
+      return Helper.response("failed", "Board not found", [], res, 200);
     }
 
-    const [updatedRows] = await board.update(updateData, { where: { id: id } });
-    if (updatedRows === 0) {
-      return Helper.response(
-        "failed",
-        "Failed to update department",
-        [],
-        res,
-        200
-      );
+    const oldBoardName = existingBoard.board_name; // Existing board name
+    const newBoardName = req.body.title; // New board name
+
+    if (!newBoardName) {
+      return Helper.response("failed", "New board name is required", [], res, 200);
     }
-    return Helper.response(
-      "success",
-      "board updated successfully",
-      [],
-      res,
-      200
-    );
+
+    // Update board name in the board table
+    const updateData = {
+      board_name: newBoardName,
+      board_color: req.body.color.value,
+      company_id: companyId,
+      created_by: companyId,
+      status: true,
+      user_id: companyId,
+      board_order: [`column-${newBoardName}`], // Update its own board_order
+    };
+
+    const [updatedRows] = await board.update(updateData, { where: { id } });
+
+    if (updatedRows === 0) {
+      return Helper.response("failed", "Failed to update board", [], res, 200);
+    }
+
+    // Fetch all boards that contain the old board name in their board_order
+    const boardsToUpdate = await board.findAll({
+      where: { company_id: companyId },
+    });
+
+    for (let b of boardsToUpdate) {
+      if (b.board_order.includes(`column-${oldBoardName}`)) {
+        const updatedBoardOrder = b.board_order.map((col) =>
+          col === `column-${oldBoardName}` ? `column-${newBoardName}` : col
+        );
+
+        // Update the board_order for that board
+        await board.update(
+          { board_order: updatedBoardOrder },
+          { where: { id: b.id } }
+        );
+      }
+    }
+
+    return Helper.response("success", "Board updated successfully", [], res, 200);
   } catch (err) {
-    console.log(err);
-    return Helper.response("failed", err.message, {}, res, 200);
+    console.error(err);
+    return Helper.response("failed", err.message, {}, res, 500);
   }
 };
 
@@ -634,8 +702,9 @@ exports.deleteBoard = async (req, res) => {
 //externally drag this functionality
 exports.boardList = async (req, res) => {
   const { columnOrder, taskOrder, newHome, newItem } = req.body;
-  const companyId = req.headers["x-id"];
-
+  // const companyId = req.user.id;
+  const companyId = req.user.company_id
+ 
   let homeId, items;
   if (taskOrder && taskOrder.homeId && Array.isArray(taskOrder.items)) {
     ({ homeId, items } = taskOrder);
@@ -690,6 +759,8 @@ exports.boardList = async (req, res) => {
       attributes: ["id", "board_name", "board_color", "board_order"],
     });
 
+   
+
     if (!boards.length) {
       return Helper.response("failed", "No boards found", [], res, 200);
     }
@@ -719,12 +790,26 @@ exports.boardList = async (req, res) => {
         : boardOrder;
 
     // Step 4: Fetch Tasks from DB
+    // const tasks = await task.findAll({
+    //   where:{user_id:req.user.id},
+    //   attributes: [
+    //     "id", "task_title", "task_description", "board_id", "task_order", 
+    //     "assign_id", "start_date", "end_date", "priority", "project_id", "user_id"
+    //   ],
+    //   order: [["task_order", "ASC"]]
+    // });
     const tasks = await task.findAll({
+      where: {
+        [Op.or]: [
+          { user_id: req.user.id }, // Fetch tasks where the user is the owner
+          { assign_id: { [Op.contains]: [req.user.id] } }, // Fetch tasks where the user is assigned
+        ],
+      },
       attributes: [
         "id", "task_title", "task_description", "board_id", "task_order", 
         "assign_id", "start_date", "end_date", "priority", "project_id", "user_id"
       ],
-      order: [["task_order", "ASC"]]
+      order: [["task_order", "ASC"]],
     });
 
     // Step 5: Convert Task Data to JSON
@@ -773,11 +858,15 @@ exports.boardList = async (req, res) => {
     }, {});
 
     const priorities = await priority.findAll({
-      attributes: ["id", "priority_name"],
+      attributes: ["id", "priority_name",'color_code'],
     });
 
     const priorityMap = priorities.reduce((acc, priority) => {
-      acc[priority.id] = priority.priority_name;
+      acc[priority.id] = {
+        label: priority.priority_name,
+        value: priority.id,
+        color_name: priority.color_code,
+      }
       return acc;
     }, {});
 
@@ -796,10 +885,7 @@ exports.boardList = async (req, res) => {
         meta: {
           project_id: projectMap[item.project_id],
           department_name: projectMap[item.project_id]?.department_name,
-          priority: {
-            label: priorityMap[item.priority],
-            value: item.priority,
-          },
+          priority:priorityMap[item.priority],
           board: item.board_id,
           user_id: {
             label: userMap[item.user_id],
@@ -835,7 +921,6 @@ exports.boardList = async (req, res) => {
       };
     });
 
-    // Step 10: Assign Tasks to Columns
     Object.values(taskData).forEach((task) => {
         const board = boards.find((b) => String(b.id) === String(task.board));
       

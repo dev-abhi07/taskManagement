@@ -99,10 +99,11 @@ exports.updatePriority = async (req, res) => {
 }
 
 exports.prioritiesDropDown = async(req,res)=>{
+    const companyId = req.user.company_id
     try{
         const priorities = await priority.findAll({
             where: {
-              company_id: req.headers['x-id']
+              company_id: companyId
             }
           })
           const priorityData = priorities.map((item) => item.toJSON());

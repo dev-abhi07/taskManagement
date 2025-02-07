@@ -60,7 +60,7 @@ const task = require("../../Models/task");
 
 exports.register = async (req, res) => {
   const { fname, lname, email, mobile, department, designation, report_to } = req.body;
-  const company_id = req.headers["x-id"];
+  const company_id = req.user.company_id
   try {
 
     const checkMobile = await users.count({
@@ -116,6 +116,7 @@ exports.register = async (req, res) => {
 
 exports.departmentDesignationBasedEmployee = async (req, res) => {
   const { department_id } = req.body;
+  const companyId = req.user.company_id
   try {
     if (!department_id) {
       return Helper.response('failed', "Please provide department Id", [], res, 200);
@@ -123,6 +124,7 @@ exports.departmentDesignationBasedEmployee = async (req, res) => {
     const designations = await designation.findAll({
       where: {
         department_id: department_id,
+        company_id:companyId
       }
     })
     const designationData = designations.map((item) => item.toJSON());
@@ -144,6 +146,7 @@ exports.departmentDesignationBasedEmployee = async (req, res) => {
 
 exports.getReportDepartmentAndDesignation = async (req, res) => {
   const { department_id, designation_id } = req.body;
+  const companyId = req.user.company_id
   try {
     if (!department_id || !designation_id) {
       return Helper.response('failed', "Please provide department Id and designation Id", [], res, 200);
@@ -153,7 +156,7 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
     const levels = await designation.findOne({
       where: {
         department_id: department_id,
-        company_id: req.headers['x-id'],
+        company_id:companyId,
         id: designation_id
       },
     });
@@ -163,7 +166,7 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
         level: {
           [Op.lt]: levels.level
         },
-        company_id: req.headers['x-id']
+        company_id:companyId
       },
       order: [["level", "ASC"]],
     });
@@ -186,7 +189,7 @@ exports.getReportDepartmentAndDesignation = async (req, res) => {
 
 exports.employeeList = async (req, res) => {
   try {
-      const companyId = req.headers['x-id'];
+      const companyId = req.user.company_id;
 
       const employeeLists = await employee.findAll({
           where: { company_id: companyId }
@@ -263,7 +266,7 @@ exports.employeeList = async (req, res) => {
               department_id:departments?.id,
               designation_id:designations?.id,
               last_login:last_login,
-              reporting_to:reports?.name
+              report_to:reports?.name
              
           };
       }));
@@ -276,15 +279,5 @@ exports.employeeList = async (req, res) => {
 };
 
 
-exports.employeeDashboard=async(req,res)=>{
-    try{
-       
-      console.log('varun')
-      
-      
 
-    }catch(err){
-      console.log(err.message)
 
-    }
-} 

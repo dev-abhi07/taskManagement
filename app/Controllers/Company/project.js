@@ -4,10 +4,14 @@ const project = require('../../Models/project')
 const employee = require('../../Models/employee');
 const { Op } = require("sequelize");
 const users = require("../../Models/users");
+const sequelize = require("../../Connection/sequelize");
 
 
 
 exports.createProject = async (req, res) => {
+   const companyId = req.user.company_id;
+
+    
     const {
         project_title,
         project_description,
@@ -22,7 +26,7 @@ exports.createProject = async (req, res) => {
 
     try {
         const dep = await department.findOne({
-            where: { id: department_id, company_id: req.headers['x-id'] }
+            where: { id: department_id, company_id: companyId }
         })
 
         const parsedTeamMembers = Array.isArray(team)
@@ -34,7 +38,7 @@ exports.createProject = async (req, res) => {
         const parsedTeamLead = BigInt(team_lead_id); // Ensure team_lead is BigInt
 
         const proj = await project.create({
-            company_id: req.headers['x-id'],
+            company_id: companyId,
             project_title,
             project_description,
             department_id,
@@ -65,12 +69,16 @@ exports.createProject = async (req, res) => {
 };
 
 exports.getProject = async (req, res) => {
+    const companyId = req.user.company_id;
+    
     try {
         const projects = await project.findAll({
             where: {
-                company_id: req.headers['x-id'],
+                company_id:companyId,
             }
         });
+         
+
 
         const data = []
         await Promise.all(projects.map(async (t) => {
@@ -102,7 +110,7 @@ exports.getProject = async (req, res) => {
             const dataValues = {
                 title: t.project_title,
                 description: t.project_description,
-                team_lead: teamLead.name,
+                team_lead: teamLead?.name,
                 id: t.id,
                 deadline: await Helper.dateFormat(t.end_date),
                 department_id: departments.id,
@@ -127,10 +135,11 @@ exports.getProject = async (req, res) => {
 }
 
 exports.projectListDropDown = async (req, res) => {
+     const companyId = req.user.company_id
     try {
         const projects = await project.findAll({
             where: {
-                company_id: req.headers['x-id']
+                company_id: companyId
             }
         });
 
@@ -159,12 +168,13 @@ exports.projectListDropDown = async (req, res) => {
 
 exports.getUserListProject = async (req, res) => {
     const { project_id } = req.body;
+    const companyId = req.user.company_id
 
     try {
         const projects = await project.findOne({
             where: {
                 id: project_id,
-                company_id: req.headers['x-id']
+                company_id: companyId
             }
         });
 
@@ -257,3 +267,78 @@ exports.deleteProject = async (req, res) => {
         return Helper.response("failed", error, [], res, 500);
     }
 }
+
+//
+
+// exports.getProject = async (req, res) => {
+//     try {
+//         const userId = req.user.id; 
+//         const companyId = req.headers['x-id'];
+//         console.log(userId)
+//         console.log(companyId)
+
+//         // Fetch projects where logged-in user is in `team_members`
+//         const projects = await project.findAll({
+//             where: {
+//                 company_id: companyId, 
+//                 team_lead: teamLeadId,   // Filter by team lead
+//                 [Op.or]: [
+//                     sequelize.literal(`team_members @> ARRAY[${userId}]::bigint[]`)  // Check team_members array
+//                 ]
+//             }
+//         });
+
+//         console.log(projects)
+
+//         // If no projects found
+//         if (!projects.length) {
+//             return Helper.response("failed", "No projects found", [], res, 200);
+//         }
+
+//         // Process projects
+//         const data = await Promise.all(
+//             projects.map(async (t) => {
+//                 const departmentData = await department.findOne({
+//                     where: { id: t.department_id, status: true }
+//                 });
+
+//                 const usersList = await users.findAll({
+//                     where: { id: { [Op.in]: t.team_members } }
+//                 });
+
+//                 const teamLead = await users.findByPk(t.team_lead);
+
+//                 const teamData = usersList.map(record => ({
+//                     value: record.id,
+//                     label: record.name
+//                 }));
+
+//                 return {
+//                     title: t.project_title,
+//                     description: t.project_description,
+//                     team_lead: teamLead ? teamLead.name : "N/A",
+//                     id: t.id,
+//                     deadline: await Helper.dateFormat(t.end_date),
+//                     department_id: departmentData ? departmentData.id : null,
+//                     start_date: await Helper.dateFormat(t.start_date),
+//                     department_name: departmentData ? departmentData.name : "N/A",
+//                     team: teamData,
+//                     team_lead_id: t.team_lead,
+//                     iso_start: t.start_date,
+//                     iso_end: t.end_date,
+//                     status: t.status ? "Active" : "Inactive"
+//                 };
+//             })
+//         );
+
+//         return Helper.response("success", "Projects found", data, res, 200);
+//     } catch (error) {
+//         console.error(error);
+//         return Helper.response("failed", error.message, [], res, 500);
+//     }
+// };
+
+
+//SELECT * FROM projects WHERE team_members @> ARRAY[4]::bigint[];
+
+

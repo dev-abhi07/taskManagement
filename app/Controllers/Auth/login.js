@@ -3,6 +3,7 @@ const department = require("../../Models/department");
 const jwt = require("jsonwebtoken");
 const Helper = require("../../Helper/helper");
 const users = require("../../Models/users");
+const company = require("../../Models/company");
 
 
 
@@ -22,12 +23,14 @@ exports.login = async (req, res) => {
         [Op.or]: [{ username: req.body.login_id }, { email: req.body.login_id }],
       },
     });
+
+    console.log('user',user)
        
     if (!user) {
       return Helper.response("failed", "User not exists!", {}, res, 200);
     }
     if (data.password === Helper.decryptPassword(user.password)) {
-      let token = jwt.sign({ id: user.id,role:user.role }, process.env.SECRET_KEY, {
+      let token = jwt.sign({ id: user?.id,role:user?.role,company_id:parseInt(user?.company_id,10)}, process.env.SECRET_KEY, {
         expiresIn: "2h",
       });
 

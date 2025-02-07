@@ -8,7 +8,7 @@ exports.authenticate = async(req,res,next)=>{
       const token = authHeader && authHeader.split(" ")[1];
       if(token){
         const decoded = await Helper.verifyToken(token);
-        console.log("decoded", decoded);
+        console.log('decoded',decoded)
         req.user = decoded;
         next();
       }
